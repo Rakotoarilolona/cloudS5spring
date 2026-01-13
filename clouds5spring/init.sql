@@ -47,3 +47,5 @@ CREATE TABLE routeProbleme(
    FOREIGN KEY(id_routeEntreprise) REFERENCES routeEntreprise(id),
    FOREIGN KEY(id_routeStatus) REFERENCES routeStatus(id)
 );
+
+

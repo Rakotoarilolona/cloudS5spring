@@ -1,0 +1,49 @@
+services:
+  # ---------------------
+  # BACKEND - SPRING BOOT
+  # ---------------------
+  app:
+    build:
+      context: ./clouds5spring
+      dockerfile: Dockerfile
+    container_name: clouds5_spring
+    depends_on:
+      - db
+    ports:
+      - "8081:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/clouds5
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    networks:
+      - app-network
+
+  # ---------------------
+  # DATABASE - POSTGRES
+  # ---------------------
+  db:
+    image: postgres:16
+    container_name: postgres_clouds5
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: clouds5
+    ports:
+      - "5434:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./clouds5spring/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - app-network
+
+  # ---------------------
+  # FRONTEND - VUEJS
+  # ---------------------
+
+networks:
+  app-network:
+
+volumes:
+  db_data:
