@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 public class RouteProbleme {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     @Column(name = "surface", precision = 15, scale = 2)
     private BigDecimal surface;
@@ -26,11 +26,11 @@ public class RouteProbleme {
 
     public RouteProbleme() {}
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
