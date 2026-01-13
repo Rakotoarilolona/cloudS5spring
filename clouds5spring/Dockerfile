@@ -5,6 +5,8 @@ RUN mvn clean package -DskipTests
 
 FROM openjdk:17.0.1-jdk-slim
 WORKDIR /app
-COPY --from=build /app/target/rest-0.0.1-SNAPSHOT.jar app.jar
+COPY --from=build /app/target/clouds5spring-0.0.1-SNAPSHOT.war app.war
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-jar", "app.war"]
+
+

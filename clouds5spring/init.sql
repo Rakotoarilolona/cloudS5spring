@@ -56,5 +56,16 @@ INSERT INTO routeStatus(label, valeur) VALUES ('nouveau', 2);
 INSERT INTO routeStatus(label, valeur) VALUES ('en cours', 3);
 INSERT INTO routeStatus(label, valeur) VALUES ('termine', 4);
 
+INSERT INTO routeEntreprise(label) VALUES ('Entreprise A');
+INSERT INTO routeEntreprise(label) VALUES ('Entreprise B');
+INSERT INTO routeEntreprise(label) VALUES ('Entreprise C');
 
 
+INSERT INTO user(email, nom, prenom, password, nbrTentative, id_userRole) VALUES
+('manager@gmail.com', 'manager', 'manager', 'manager', 0, 1);
+
+INSERT INTO user(email, nom, prenom, password, nbrTentative, id_userRole) VALUES
+('jean@gmail.com', 'Rigo', 'Jean', 'jean123', 0, 2);
+
+INSERT INTO user(email, nom, prenom, password, nbrTentative, id_userRole) VALUES
+('kaiamba@gmail.com', 'Kaiamba', 'Kaiamba', 'kaiamba123', 0, 2);
