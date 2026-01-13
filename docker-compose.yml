@@ -24,7 +24,7 @@ services:
   # ---------------------
   db:
     image: postgres:16
-    container_name: postgres_clouds5
+    container_name: clouds5_postgres
     restart: always
     environment:
       POSTGRES_USER: postgres
