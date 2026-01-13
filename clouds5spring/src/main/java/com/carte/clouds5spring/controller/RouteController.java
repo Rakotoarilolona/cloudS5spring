@@ -1,5 +1,11 @@
 package com.carte.clouds5spring.controller;
 
-public class RouteController {
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/data")
+public class RouteController 
+{
+    
     
 }
