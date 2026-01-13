@@ -17,7 +17,7 @@ CREATE TABLE routeStatus(
    PRIMARY KEY(id)
 );
 
-CREATE TABLE user_(
+CREATE TABLE user(
    id SERIAL,
    email VARCHAR(100) ,
    nom VARCHAR(100) ,
@@ -34,7 +34,7 @@ CREATE TABLE userTentativeHistorique(
    dateHistorique TIMESTAMP,
    id_user INTEGER,
    PRIMARY KEY(id),
-   FOREIGN KEY(id_user) REFERENCES user_(id)
+   FOREIGN KEY(id_user) REFERENCES user(id)
 );
 
 CREATE TABLE routeProbleme(
@@ -47,5 +47,14 @@ CREATE TABLE routeProbleme(
    FOREIGN KEY(id_routeEntreprise) REFERENCES routeEntreprise(id),
    FOREIGN KEY(id_routeStatus) REFERENCES routeStatus(id)
 );
+
+INSERT INTO userRole(label) VALUES ('manager');
+INSERT INTO userRole(label) VALUES ('utilisateur');
+
+INSERT INTO routeStatus(label, valeur) VALUES ('signale', 1);
+INSERT INTO routeStatus(label, valeur) VALUES ('nouveau', 2);
+INSERT INTO routeStatus(label, valeur) VALUES ('en cours', 3);
+INSERT INTO routeStatus(label, valeur) VALUES ('termine', 4);
+
 
 
