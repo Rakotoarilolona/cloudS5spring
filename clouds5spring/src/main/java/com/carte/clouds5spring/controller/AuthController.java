@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.carte.clouds5spring.dto.ApiResponse;
 import com.carte.clouds5spring.dto.AuthResponse;
 import com.carte.clouds5spring.dto.LoginRequest;
 import com.carte.clouds5spring.dto.RegisterRequest;
@@ -22,13 +23,25 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody RegisterRequest req) {
+    public ResponseEntity<ApiResponse<Object>> register(
+            @RequestBody RegisterRequest req) {
+
         authService.register(req);
-        return ResponseEntity.ok("Account created");
+
+        return ResponseEntity.ok(
+            ApiResponse.success(null)
+        );
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest req) {
-        return ResponseEntity.ok(authService.login(req));
+    public ResponseEntity<ApiResponse<AuthResponse>> login(
+            @RequestBody LoginRequest req) {
+
+        AuthResponse authResponse = authService.login(req);
+
+        return ResponseEntity.ok(
+            ApiResponse.success(authResponse)
+        );
     }
+
 }

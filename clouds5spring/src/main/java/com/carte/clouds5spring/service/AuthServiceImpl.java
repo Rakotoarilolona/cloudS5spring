@@ -13,6 +13,7 @@ import com.carte.clouds5spring.dto.RegisterRequest;
 import com.carte.clouds5spring.entity.User;
 import com.carte.clouds5spring.entity.UserRole;
 import com.carte.clouds5spring.entity.UserTentativeHistorique;
+import com.carte.clouds5spring.exception.ApiException;
 import com.carte.clouds5spring.repository.UserRepository;
 import com.carte.clouds5spring.repository.UserRoleRepository;
 import com.carte.clouds5spring.repository.UserTentativeHistoriqueRepository;
@@ -42,12 +43,12 @@ public class AuthServiceImpl implements AuthService
     public void register(RegisterRequest req) {
 
         if (userRepository.findByEmail(req.email).isPresent()) {
-            throw new RuntimeException("Email already exists");
+            throw new ApiException("Email already exists");
         }
 
         UserRole roleUser = userRoleRepository
                 .findByLabel("utilisateur")
-                .orElseThrow(() -> new RuntimeException("Role USER not found"));
+                .orElseThrow(() -> new ApiException("Role USER not found"));
 
         User user = new User();
         user.setEmail(req.email);
@@ -62,10 +63,10 @@ public class AuthServiceImpl implements AuthService
     public AuthResponse login(LoginRequest req) {
 
         User user = userRepository.findByEmail(req.email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ApiException("User not found"));
 
         if (user.getNbrTentative() >= MAX_TENTATIVE) {
-            throw new RuntimeException("Account blocked");
+            throw new ApiException("Account blocked");
         }
 
         if (!passwordEncoder.matches(req.password, user.getPassword())) {
@@ -78,7 +79,7 @@ public class AuthServiceImpl implements AuthService
             hist.setUser(user);
             historiqueRepository.save(hist);
 
-            throw new RuntimeException("Invalid credentials");
+            throw new ApiException("Invalid credentials");
         }
 
         user.setNbrTentative(0);
