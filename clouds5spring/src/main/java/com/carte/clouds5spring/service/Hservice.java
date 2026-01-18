@@ -6,7 +6,6 @@ import com.carte.clouds5spring.hutil.Hjson;
 import com.carte.clouds5spring.repository.RouteProblemeRepository;
 import com.carte.clouds5spring.models.RouteDashboard;
 import org.springframework.stereotype.Service;
-import org.springframework.util.RouteMatcher.Route;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,65 +20,41 @@ public class Hservice {
     }
 
     public String getProblemeRoutier() {
-        String data="";
-        try
-        {
-            List<RouteProbleme> problemeList = routeProblemeRepository.findAll();
-            if(problemeList.isEmpty()) {
-                return Hjson.formatJson("","error","No data found");
-            }
-            List<RouteProblemeDto> dtoList = new ArrayList<>(problemeList.size());
-
-            for (int i = 0; i < problemeList.size(); i++) {
-                dtoList.add(problemeList.get(i).toDto());
-            }
-
-            data= Hjson.toJson(dtoList);
-            return Hjson.formatJson(data,"success","Data fetched successfully");
+        List<RouteProbleme> problemeList = routeProblemeRepository.findAll();
+        if (problemeList.isEmpty()) {
+            throw new RuntimeException("No data found");
         }
-        catch(Exception e)
-        {
-            return Hjson.formatJson("","error",e.getMessage());
+
+        List<RouteProblemeDto> dtoList = new ArrayList<>(problemeList.size());
+        for (int i = 0; i < problemeList.size(); i++) {
+            dtoList.add(problemeList.get(i).toDto());
         }
+
+        String data = Hjson.toJson(dtoList);
+        return Hjson.formatJson(data, "success", "Data fetched successfully");
     }
 
     public String getProblemeDetail(String id) {
-        try
-        {
-            Optional<RouteProbleme> probleme = routeProblemeRepository.findById(Long.parseLong(id));
-            if(probleme.isEmpty()) {
-                return Hjson.formatJson("","error","Data not found for id: " + id);
-            }
-            RouteProblemeDto dto = probleme.get().toDto();
-            String data = Hjson.toJson(dto);
-            return Hjson.formatJson(data,"success","Data fetched successfully");
-
+        Optional<RouteProbleme> probleme = routeProblemeRepository.findById(Long.parseLong(id));
+        if (probleme.isEmpty()) {
+            throw new RuntimeException("Data not found for id: " + id);
         }
-        catch(Exception e)
-        {
-            return Hjson.formatJson("","error",e.getMessage());
-        }
+        RouteProblemeDto dto = probleme.get().toDto();
+        String data = Hjson.toJson(dto);
+        return Hjson.formatJson(data, "success", "Data fetched successfully");
     }
 
     public String getProblemeDashboard() {
-        try
-        {
-            List<RouteProbleme> problemeList = routeProblemeRepository.findAll();
-            if(problemeList.isEmpty()) {
-                return Hjson.formatJson("","error","No data found");
-            }
-            List<RouteProblemeDto> dtoList = new ArrayList<>(problemeList.size());
-            for (int i = 0; i < problemeList.size(); i++) {
-                dtoList.add(problemeList.get(i).toDto());
-            }
-            RouteDashboard routes=RouteDashboard.calcul(dtoList);
-            String data = Hjson.toJson(routes);
-            return Hjson.formatJson(data,"success","Data fetched successfully");
-               
+        List<RouteProbleme> problemeList = routeProblemeRepository.findAll();
+        if (problemeList.isEmpty()) {
+            throw new RuntimeException("No data found");
         }
-        catch(Exception e)
-        {
-            return Hjson.formatJson("","error",e.getMessage());
+        List<RouteProblemeDto> dtoList = new ArrayList<>(problemeList.size());
+        for (int i = 0; i < problemeList.size(); i++) {
+            dtoList.add(problemeList.get(i).toDto());
         }
+        RouteDashboard routes = RouteDashboard.calcul(dtoList);
+        String data = Hjson.toJson(routes);
+        return Hjson.formatJson(data, "success", "Data fetched successfully");
     }
 }
