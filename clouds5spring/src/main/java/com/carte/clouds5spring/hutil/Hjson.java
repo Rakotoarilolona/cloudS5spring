@@ -63,4 +63,8 @@ public class Hjson {
             throw new RuntimeException("Erreur lors de la transformation de la liste en JSON", e);
         }
     }
+    public static String formatJson(String data, String status, String message)
+    {
+        return "{ \"status\": \"" + status + "\", \"data\": \"" + data + "\", \"message\": \"" + message + "\" }";
+    }
 }

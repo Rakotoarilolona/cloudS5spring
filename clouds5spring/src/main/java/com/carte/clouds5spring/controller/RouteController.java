@@ -6,18 +6,22 @@ import com.carte.clouds5spring.service.Hservice;
 @RequestMapping("/api/data")
 public class RouteController 
 {
+    private final Hservice hservice;
+    public RouteController(Hservice hservice) {
+        this.hservice = hservice;
+    }
     @GetMapping("/routeprobleme")
     public String getRouteProbleme() {
-        return Hservice.getProblemeRoutier();
+        return hservice.getProblemeRoutier();
     }
 
     @GetMapping("/routeprobleme/{id}")
     public String getRouteProblemeById(@PathVariable String id) {
-        return Hservice.getProblemeDetail(id);
+        return hservice.getProblemeDetail(id);
     }
 
     @GetMapping("/routeprobleme/dashboard")
     public String getRouteProblemeDashboard() {
-        return Hservice.getProblemeDashboard();
+        return hservice.getProblemeDashboard();
     }
 }
