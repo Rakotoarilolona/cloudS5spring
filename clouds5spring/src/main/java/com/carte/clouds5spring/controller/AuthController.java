@@ -1,31 +1,34 @@
 package com.carte.clouds5spring.controller;
 
-import com.carte.clouds5spring.security.util.JwtUtil;
-import com.carte.clouds5spring.dto.AuthRequest;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.carte.clouds5spring.dto.AuthResponse;
+import com.carte.clouds5spring.dto.LoginRequest;
+import com.carte.clouds5spring.dto.RegisterRequest;
+import com.carte.clouds5spring.service.AuthService;
 
 @RestController
-@RequestMapping("/api/auth")
-public class AuthController 
-{
-	private final AuthenticationManager authenticationManager;
-	private final JwtUtil jwtUtil;
+@RequestMapping("/auth")
+public class AuthController {
 
-	public AuthController(AuthenticationManager authenticationManager, JwtUtil jwtUtil) 
-	{
-		this.authenticationManager = authenticationManager;
-		this.jwtUtil = jwtUtil;
-	}
+    private final AuthService authService;
 
-	@PostMapping("/login")
-	public String login(@RequestBody AuthRequest request) 
-	{
-		Authentication authentication = authenticationManager.authenticate(
-			new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
-		
-		return jwtUtil.generateToken(request.getUsername());
-	}
+    public AuthController(AuthService a) {
+        this.authService = a;
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@RequestBody RegisterRequest req) {
+        authService.register(req);
+        return ResponseEntity.ok("Account created");
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest req) {
+        return ResponseEntity.ok(authService.login(req));
+    }
 }

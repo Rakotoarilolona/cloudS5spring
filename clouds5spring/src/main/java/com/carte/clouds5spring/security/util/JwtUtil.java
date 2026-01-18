@@ -9,7 +9,7 @@ import java.security.Key;
 @Component
 public class JwtUtil 
 {
-	private final String SECRET = "maCleSuperSecretePourJWTDe32CaracteresMinimum";
+	private final String SECRET = "maCleSuperSecretePourJWTDe32CaracteresMinimum!@#$";  // 32+ caractères
 	private final Integer EXPIRATION_TIME = 86400000; // 24h
 
 	private Key getSigningKey() 
