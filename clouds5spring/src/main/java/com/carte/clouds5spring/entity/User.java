@@ -3,6 +3,8 @@ package com.carte.clouds5spring.entity;
 import jakarta.persistence.*;
 import java.util.List;
 
+import com.carte.clouds5spring.dto.UserDto;
+
 @Entity
 @Table(name = "user_")
 public class User {
@@ -96,5 +98,31 @@ public class User {
 
     public void setTentatives(List<UserTentativeHistorique> tentatives) {
         this.tentatives = tentatives;
+    }
+    public UserDto toDto() {
+        if (this == null) {
+            return null;
+        }
+        
+        UserDto dto = new UserDto();
+        if(this.getId() != null) {
+            dto.setId(this.getId());
+        }
+        if(this.getEmail() != null) {
+            dto.setEmail(this.getEmail());
+        }
+        if(this.getNom() != null) {
+            dto.setNom(this.getNom());
+        }
+        if(this.getPrenom() != null) {
+            dto.setPrenom(this.getPrenom());
+        }
+        if(this.getNbrTentative() != null) {
+            dto.setNbrTentative(this.getNbrTentative());
+        }
+        if(this.getUserRole() != null && this.getUserRole().getId() != null) {
+            dto.setUserRoleId(this.getUserRole().getId());
+        }
+        return dto;
     }
 }

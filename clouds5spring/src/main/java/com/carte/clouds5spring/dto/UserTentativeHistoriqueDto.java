@@ -2,6 +2,8 @@ package com.carte.clouds5spring.dto;
 
 import java.time.LocalDateTime;
 
+import com.carte.clouds5spring.entity.UserTentativeHistorique;
+
 public class UserTentativeHistoriqueDto {
     private Integer id;
     private LocalDateTime dateHistorique;
@@ -31,5 +33,19 @@ public class UserTentativeHistoriqueDto {
 
     public void setUserId(Integer userId) {
         this.userId = userId;
+    }
+    public UserTentativeHistorique toEntity() {
+    if (this == null) {
+        return null;
+    }
+    
+    UserTentativeHistorique entity = new UserTentativeHistorique();
+        if(this.getId() != null) {
+            entity.setId(this.getId());
+        }
+        if(this.getDateHistorique() != null) {
+            entity.setDateHistorique(this.getDateHistorique());
+        }
+        return entity;
     }
 }

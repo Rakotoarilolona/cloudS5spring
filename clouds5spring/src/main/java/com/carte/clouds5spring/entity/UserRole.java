@@ -3,6 +3,8 @@ package com.carte.clouds5spring.entity;
 import jakarta.persistence.*;
 import java.util.List;
 
+import com.carte.clouds5spring.dto.UserRoleDto;
+
 @Entity
 @Table(name = "userRole")
 public class UserRole {
@@ -40,5 +42,19 @@ public class UserRole {
 
     public void setUsers(List<User> users) {
         this.users = users;
+    }
+    public UserRoleDto toDto() {
+        if (this == null) {
+            return null;
+        }
+        
+        UserRoleDto dto = new UserRoleDto();
+        if(this.getId() != null) {
+            dto.setId(this.getId());
+        }
+        if(this.getLabel() != null) {
+            dto.setLabel(this.getLabel());
+        }
+        return dto;
     }
 }
