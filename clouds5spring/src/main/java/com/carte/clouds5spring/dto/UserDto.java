@@ -1,11 +1,11 @@
 package com.carte.clouds5spring.dto;
 
+import com.carte.clouds5spring.entity.User;
 public class UserDto {
     private Integer id;
     private String email;
     private String nom;
     private String prenom;
-    private String password;
     private Integer nbrTentative;
     private Integer userRoleId;
 
@@ -43,14 +43,6 @@ public class UserDto {
         this.prenom = prenom;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public Integer getNbrTentative() {
         return nbrTentative;
     }
@@ -65,5 +57,28 @@ public class UserDto {
 
     public void setUserRoleId(Integer userRoleId) {
         this.userRoleId = userRoleId;
+    }
+    public User toEntity() {
+        if (this == null) {
+            return null;
+        }
+        
+        User entity = new User();
+        if(this.getId() != null) {
+            entity.setId(this.getId());
+        }
+        if(this.getEmail() != null) {
+            entity.setEmail(this.getEmail());
+        }
+        if(this.getNom() != null) {
+            entity.setNom(this.getNom());
+        }
+        if(this.getPrenom() != null) {
+            entity.setPrenom(this.getPrenom());
+        }
+        if(this.getNbrTentative() != null) {
+            entity.setNbrTentative(this.getNbrTentative());
+        }
+        return entity;
     }
 }

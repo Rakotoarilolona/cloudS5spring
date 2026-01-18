@@ -2,6 +2,8 @@ package com.carte.clouds5spring.dto;
 
 import java.math.BigDecimal;
 
+import com.carte.clouds5spring.entity.RouteProbleme;
+
 public class RouteProblemeDto {
     private Integer id;
     private BigDecimal surface;
@@ -49,5 +51,22 @@ public class RouteProblemeDto {
 
     public void setRouteStatusId(Integer routeStatusId) {
         this.routeStatusId = routeStatusId;
+    }
+    public RouteProbleme toEntity() {
+        if (this == null) {
+            return null;
+        }
+        
+        RouteProbleme entity = new RouteProbleme();
+        if(this.getId() != null) {
+            entity.setId(this.getId());
+        }
+        if(this.getSurface() != null) {
+            entity.setSurface(this.getSurface());
+        }
+        if(this.getBudget() != null) {
+            entity.setBudget(this.getBudget());
+        }
+        return entity;
     }
 }

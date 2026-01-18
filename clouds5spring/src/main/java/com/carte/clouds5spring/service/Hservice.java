@@ -1,9 +1,11 @@
 package com.carte.clouds5spring.service;
 
+import com.carte.clouds5spring.entity.*;
 public class Hservice 
 {
     public static String getProblemeRoutier()
     {
+
         return "Service: Route Probleme Data";
     }
     public static String getProblemeDetail(String id)
