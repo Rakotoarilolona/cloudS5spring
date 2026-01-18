@@ -1,4 +1,17 @@
 schemas:
+  AuthRequest:
+    type: object
+    required:
+      - username
+      - password
+    properties:
+      username:
+        type: string
+        example: admin
+      password:
+        type: string
+        example: admin123
+
   StandardResponse:
     type: object
     properties:

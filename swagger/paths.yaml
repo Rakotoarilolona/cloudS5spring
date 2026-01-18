@@ -1,0 +1,99 @@
+/api/auth/login:
+  post:
+    tags:
+      - Authentification
+    summary: Authentification (login)
+    description: Retourne un JWT (string) si les identifiants sont valides.
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AuthRequest'
+    responses:
+      '200':
+        description: JWT token
+        content:
+          text/plain:
+            schema:
+              type: string
+              example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+      '500':
+        description: Erreur interne
+        content:
+          text/plain:
+            schema:
+              type: string
+              example: '{ "status": "error", "data": "", "message": "500 Internal Server Error: ..." }'
+
+/api/data/routeprobleme:
+  get:
+    tags:
+      - Signalements
+    summary: Liste des problèmes routiers
+    description: Retourne une chaîne JSON formatée via Hjson.
+    responses:
+      '200':
+        description: Succès
+        content:
+          text/plain:
+            schema:
+              type: string
+              example: '{ "status": "success", "data": "[...]", "message": "Data fetched successfully" }'
+      '500':
+        description: Erreur interne
+        content:
+          text/plain:
+            schema:
+              type: string
+              example: '{ "status": "error", "data": "", "message": "500 Internal Server Error: ..." }'
+
+/api/data/routeprobleme/{id}:
+  get:
+    tags:
+      - Signalements
+    summary: Détail d’un problème routier
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        example: '1'
+    responses:
+      '200':
+        description: Succès
+        content:
+          text/plain:
+            schema:
+              type: string
+              example: '{ "status": "success", "data": "{...}", "message": "Data fetched successfully" }'
+      '500':
+        description: Erreur interne
+        content:
+          text/plain:
+            schema:
+              type: string
+              example: '{ "status": "error", "data": "", "message": "500 Internal Server Error: ..." }'
+
+/api/data/routeprobleme/dashboard:
+  get:
+    tags:
+      - Signalements
+    summary: Dashboard des problèmes routiers
+    description: Retourne un résumé calculé (RouteDashboard) sous forme de chaîne JSON formatée via Hjson.
+    responses:
+      '200':
+        description: Succès
+        content:
+          text/plain:
+            schema:
+              type: string
+              example: '{ "status": "success", "data": "{...}", "message": "Data fetched successfully" }'
+      '500':
+        description: Erreur interne
+        content:
+          text/plain:
+            schema:
+              type: string
+              example: '{ "status": "error", "data": "", "message": "500 Internal Server Error: ..." }'
