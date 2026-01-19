@@ -45,8 +45,7 @@ public class SecurityConfig
 					"/v3/api-docs",
 					"/v3/api-docs/**",
 					"/auth/register",
-					"/auth/login",
-					""
+					"/auth/login"
 				).permitAll()
 				.anyRequest().authenticated())
 			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
