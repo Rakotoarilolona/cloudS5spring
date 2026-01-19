@@ -13,6 +13,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
+import com.carte.clouds5spring.dto.RouteProblemeDto;
+
 @Entity
 @Table(name = "routeProbleme")
 public class RouteProbleme {
@@ -105,5 +107,27 @@ public class RouteProbleme {
     }
     public void setUser(User user) {
         this.user = user;
+    public RouteProblemeDto toDto() {
+    if (this == null) {
+        return null;
+    }
+    
+    RouteProblemeDto dto = new RouteProblemeDto();
+        if(this.getId() != null) {
+            dto.setId(this.getId());
+        }
+        if(this.getSurface() != null) {
+            dto.setSurface(this.getSurface());
+        }
+        if(this.getBudget() != null) {
+            dto.setBudget(this.getBudget());
+        }
+        if(this.getRouteEntreprise() != null && this.getRouteEntreprise().getId() != null) {
+            dto.setRouteEntrepriseId(this.getRouteEntreprise().getId());
+        }
+        if(this.getRouteStatus() != null && this.getRouteStatus().getId() != null) {
+            dto.setRouteStatusId(this.getRouteStatus().getId());
+        }
+        return dto;
     }
 }

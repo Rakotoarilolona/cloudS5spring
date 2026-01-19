@@ -3,6 +3,8 @@ package com.carte.clouds5spring.entity;
 import jakarta.persistence.*;
 import java.util.List;
 
+import com.carte.clouds5spring.dto.RouteStatusDto;
+
 @Entity
 @Table(name = "routeStatus")
 public class RouteStatus {
@@ -51,5 +53,22 @@ public class RouteStatus {
 
     public void setRouteProblemes(List<RouteProbleme> routeProblemes) {
         this.routeProblemes = routeProblemes;
+    }
+    public RouteStatusDto toDto() {
+        if (this == null) {
+            return null;
+        }
+        
+        RouteStatusDto dto = new RouteStatusDto();
+        if(this.getId() != null) {
+            dto.setId(this.getId());
+        }
+        if(this.getLabel() != null) {
+            dto.setLabel(this.getLabel());
+        }
+        if(this.getValeur() != null) {
+            dto.setValeur(this.getValeur());
+        }
+        return dto;
     }
 }
