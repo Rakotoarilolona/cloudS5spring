@@ -16,7 +16,7 @@ REM Vérifier si le conteneur Spring existe
 docker ps -a --format "{{.Names}}" | findstr /C:"clouds5_spring" >nul
 if errorlevel 1 (
     echo ❌ Le conteneur clouds5_spring n'existe pas
-    echo ⚠️  Lancement avec: docker-compose up --build
+    echo ⚠️  Lancement avec: docker compose up --build
     pause
     exit /b 1
 )
@@ -27,7 +27,7 @@ if errorlevel 1 (
     echo ⚠️  Le conteneur clouds5_spring n'est pas démarré
     set /p start="Voulez-vous le démarrer? (o/n): "
     if /i "!start!"=="o" (
-        docker-compose up -d app
+        docker compose up -d app
         echo ⏳ Attente du démarrage du conteneur...
         timeout /t 10 /nobreak >nul
     ) else (

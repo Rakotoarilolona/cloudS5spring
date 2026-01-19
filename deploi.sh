@@ -14,7 +14,7 @@ fi
 # Vérifier si le conteneur Spring existe
 if ! docker ps -a --format '{{.Names}}' | grep -q 'clouds5_spring'; then
     echo "❌ Le conteneur clouds5_spring n'existe pas"
-    echo "⚠️  Lancement avec: docker-compose up --build"
+    echo "⚠️  Lancement avec: docker compose up --build"
     exit 1
 fi
 
@@ -24,7 +24,7 @@ if ! docker ps --format '{{.Names}}' | grep -q 'clouds5_spring'; then
     read -p "Voulez-vous le démarrer? (o/n): " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Oo]$ ]]; then
-        docker-compose up -d app
+        docker compose up -d app
         echo "⏳ Attente du démarrage du conteneur..."
         sleep 10
     else
