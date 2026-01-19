@@ -5,9 +5,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.carte.clouds5spring.security.filter.JwtAuthenticationFilter;
 
@@ -25,31 +27,30 @@ public class SecurityConfig
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http
 			.csrf(csrf -> csrf.disable())
-			.authorizeHttpRequests(auth -> auth
-				.requestMatchers("/test").authenticated()
-				.anyRequest().permitAll() // ← TOUT EST AUTORISÉ
-			);
-			// );
 			// .authorizeHttpRequests(auth -> auth
-			// 	.requestMatchers("/auth/**").permitAll()
-			// 	.requestMatchers("/admin/**").hasRole("admin")
-			// 	.anyRequest().authenticated()
+			// 	.requestMatchers("/test").authenticated()
+			// 	.anyRequest().permitAll() // ← TOUT EST AUTORISÉ
 			// );
-				// .requestMatchers(
-				// 	"/api/data/routeprobleme",
-				// 	"/api/data/routeprobleme/dashboard",
-				// 	"/api/data/routeprobleme/{id}",
-				// 	"/swagger-ui.html",
-				// 	"/swagger-ui/index.html",
-				// 	"/swagger-ui/**",
-				// 	"/api-docs",
-				// 	"/api-docs/**",
-				// 	"/v3/api-docs",
-				// 	"/v3/api-docs/**"
-				// ).permitAll()
-				// .anyRequest().authenticated());
-			// .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-			// .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+			// );
+			.authorizeHttpRequests(auth -> auth
+				.requestMatchers(
+					"/api/data/routeprobleme",
+					"/api/data/routeprobleme/dashboard",
+					"/api/data/routeprobleme/{id}",
+					"/swagger-ui.html",
+					"/swagger-ui/index.html",
+					"/swagger-ui/**",
+					"/api-docs",
+					"/api-docs/**",
+					"/v3/api-docs",
+					"/v3/api-docs/**",
+					"/auth/register",
+					"/auth/login",
+					""
+				).permitAll()
+				.anyRequest().authenticated())
+			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+			.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 		
 		return http.build();
 	}
