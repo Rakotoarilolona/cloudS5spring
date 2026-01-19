@@ -48,6 +48,7 @@ CREATE TABLE routeProbleme(
 
 INSERT INTO userRole(label) VALUES ('manager');
 INSERT INTO userRole(label) VALUES ('utilisateur');
+INSERT INTO userRole(label) VALUES ('admin');
 
 INSERT INTO routeStatus(label, valeur) VALUES ('signale', 1);
 INSERT INTO routeStatus(label, valeur) VALUES ('nouveau', 2);

@@ -17,6 +17,7 @@ import com.carte.clouds5spring.exception.ApiException;
 import com.carte.clouds5spring.repository.UserRepository;
 import com.carte.clouds5spring.repository.UserRoleRepository;
 import com.carte.clouds5spring.repository.UserTentativeHistoriqueRepository;
+import com.carte.clouds5spring.security.constant.SecurityConstants;
 
 @Service
 @Component
@@ -27,7 +28,7 @@ public class AuthServiceImpl implements AuthService
     private final UserTentativeHistoriqueRepository historiqueRepository;
     private final PasswordEncoder passwordEncoder;
 
-    private static final int MAX_TENTATIVE = 3;
+    // private static final int MAX_TENTATIVE = 3;
 
     public AuthServiceImpl(UserRepository u,
                            UserRoleRepository r,
@@ -60,13 +61,18 @@ public class AuthServiceImpl implements AuthService
     }
 
     @Override
-    public AuthResponse login(LoginRequest req) {
-
+    public AuthResponse login(LoginRequest req) 
+    {
         User user = userRepository.findByEmail(req.email)
                 .orElseThrow(() -> new ApiException("User not found"));
 
-        if (user.getNbrTentative() >= MAX_TENTATIVE) {
+        if (user.getNbrTentative() >= SecurityConstants.MAX_TENTATIVE) {
             throw new ApiException("Account blocked");
+        }
+
+        if (user.getBlockedAt() != null &&
+            user.getBlockedAt().plusHours(24).isAfter(LocalDateTime.now())) {
+            throw new ApiException("Account temporarily blocked");
         }
 
         if (!passwordEncoder.matches(req.password, user.getPassword())) {

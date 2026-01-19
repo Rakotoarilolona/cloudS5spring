@@ -22,15 +22,20 @@ public class SecurityConfig
 	}
 
 	@Bean
-public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    http
-        .csrf(csrf -> csrf.disable())
-        .authorizeHttpRequests(auth -> auth
-            .anyRequest().permitAll()  // ← TOUT EST AUTORISÉ
-        );
-    
-    return http.build();
-}
+	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+		http
+			.csrf(csrf -> csrf.disable())
+			.authorizeHttpRequests(auth -> auth
+				.anyRequest().permitAll()  // ← TOUT EST AUTORISÉ
+			);
+			// .authorizeHttpRequests(auth -> auth
+			// 	.requestMatchers("/auth/**").permitAll()
+			// 	.requestMatchers("/admin/**").hasRole("admin")
+			// 	.anyRequest().authenticated()
+			// );
+		
+		return http.build();
+	}
 
 	@Bean
 	public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception 

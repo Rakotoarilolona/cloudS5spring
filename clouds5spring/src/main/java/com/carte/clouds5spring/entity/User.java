@@ -1,5 +1,6 @@
 package com.carte.clouds5spring.entity;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import jakarta.persistence.Column;
@@ -20,6 +21,8 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    private String pseudo;
+
     @Column(name = "email", length = 100)
     private String email;
 
@@ -36,6 +39,12 @@ public class User {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<UserTentativeHistorique> tentatives;
 
+    @Column
+    private LocalDateTime blockedAt;
+
+    @Column(name = "firebase_uid", unique = true)
+    private String firebaseUid;
+
     public User() {}
 
     public Integer getId() {
@@ -44,6 +53,14 @@ public class User {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public String getPseudo() {
+        return pseudo;
+    }
+
+    public void setPseudo(String pseudo) {
+        this.pseudo = pseudo;
     }
 
     public String getEmail() {
@@ -84,5 +101,21 @@ public class User {
 
     public void setTentatives(List<UserTentativeHistorique> tentatives) {
         this.tentatives = tentatives;
+    }
+
+    public LocalDateTime getBlockedAt() {
+        return blockedAt;
+    }
+
+    public void setBlockedAt(LocalDateTime blockedAt) {
+        this.blockedAt = blockedAt;
+    }
+
+    public String getFirebaseUid() {
+        return firebaseUid;
+    }
+
+    public void setFirebaseUid(String firebaseUid) {
+        this.firebaseUid = firebaseUid;
     }
 }
