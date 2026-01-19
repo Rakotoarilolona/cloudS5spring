@@ -27,7 +27,18 @@ public class SecurityConfig
 		http
 			.csrf(csrf -> csrf.disable())
 			.authorizeHttpRequests(auth -> auth
-				.requestMatchers("/api/data/routeprobleme","/api/data/routeprobleme/dashboard","/api/data/routeprobleme/{id}").permitAll()
+				.requestMatchers(
+					"/api/data/routeprobleme",
+					"/api/data/routeprobleme/dashboard",
+					"/api/data/routeprobleme/{id}",
+					"/swagger-ui.html",
+					"/swagger-ui/index.html",
+					"/swagger-ui/**",
+					"/api-docs",
+					"/api-docs/**",
+					"/v3/api-docs",
+					"/v3/api-docs/**"
+				).permitAll()
 				.anyRequest().authenticated())
 			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 			.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
