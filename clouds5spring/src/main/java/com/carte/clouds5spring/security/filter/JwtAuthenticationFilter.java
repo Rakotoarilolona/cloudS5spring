@@ -19,56 +19,57 @@ import jakarta.servlet.http.HttpServletResponse;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter 
 {
-	private final JwtUtil jwtUtil;
-	private final UserDetailsService userDetailsService;
+    private final JwtUtil jwtUtil;
+    private final UserDetailsService userDetailsService;
 
-	public JwtAuthenticationFilter(JwtUtil jwtUtil, UserDetailsService userDetailsService) 
-	{
-		this.jwtUtil = jwtUtil;
-		this.userDetailsService = userDetailsService;
-	}
+    public JwtAuthenticationFilter(JwtUtil jwtUtil,
+                                   UserDetailsService userDetailsService) {
+        this.jwtUtil = jwtUtil;
+        this.userDetailsService = userDetailsService;
+    }
 
-	@Override
-protected void doFilterInternal(HttpServletRequest request,
-                                HttpServletResponse response,
-                                FilterChain filterChain)
-        throws ServletException, IOException {
+    @Override
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain filterChain)
+            throws ServletException, IOException {
 
-    String authHeader = request.getHeader("Authorization");
+        String authHeader = request.getHeader("Authorization");
 
-    if (authHeader != null && authHeader.startsWith("Bearer ")) {
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
 
-        String token = authHeader.substring(7);
+            String token = authHeader.substring(7);
 
-        // 🔒 Sécurité minimale
-        if (!token.isBlank()) {
             try {
-                String username = jwtUtil.extractUsername(token);
+                //  email contenu dans le JWT
+                String email = jwtUtil.extractEmail(token);
 
-                if (username != null &&
-                    SecurityContextHolder.getContext().getAuthentication() == null &&
-                    jwtUtil.validateToken(token)) {
+                //  Important : pas déjà authentifié
+                if (email != null &&
+                    SecurityContextHolder.getContext().getAuthentication() == null) {
 
                     UserDetails userDetails =
-                            userDetailsService.loadUserByUsername(username);
+                            userDetailsService.loadUserByUsername(email);
 
-                    UsernamePasswordAuthenticationToken authToken =
+                    UsernamePasswordAuthenticationToken authentication =
                             new UsernamePasswordAuthenticationToken(
                                     userDetails,
                                     null,
                                     userDetails.getAuthorities()
                             );
 
-                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                    SecurityContextHolder
+                            .getContext()
+                            .setAuthentication(authentication);
                 }
+
             } catch (Exception e) {
-                // Token invalide → on laisse passer sans authentification
+                // JWT invalide / expiré / mal signé
+                //  on NE bloque PAS ici, Spring retournera 401 plus tard
                 System.out.println("JWT invalide : " + e.getMessage());
             }
         }
+
+        filterChain.doFilter(request, response);
     }
-
-    filterChain.doFilter(request, response);
-}
-
 }

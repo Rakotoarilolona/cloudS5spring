@@ -1,9 +1,7 @@
 package com.carte.clouds5spring.service;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +16,7 @@ import com.carte.clouds5spring.repository.UserRepository;
 import com.carte.clouds5spring.repository.UserRoleRepository;
 import com.carte.clouds5spring.repository.UserTentativeHistoriqueRepository;
 import com.carte.clouds5spring.security.constant.SecurityConstants;
+import com.carte.clouds5spring.security.util.JwtUtil;
 
 @Service
 @Component
@@ -26,18 +25,19 @@ public class AuthServiceImpl implements AuthService
     private final UserRepository userRepository;
     private final UserRoleRepository userRoleRepository;
     private final UserTentativeHistoriqueRepository historiqueRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
+
 
     // private static final int MAX_TENTATIVE = 3;
 
     public AuthServiceImpl(UserRepository u,
                            UserRoleRepository r,
                            UserTentativeHistoriqueRepository h,
-                           PasswordEncoder p) {
+                        JwtUtil j) {
         this.userRepository = u;
         this.userRoleRepository = r;
         this.historiqueRepository = h;
-        this.passwordEncoder = p;
+        this.jwtUtil = j;
     }
 
     @Override
@@ -53,7 +53,7 @@ public class AuthServiceImpl implements AuthService
 
         User user = new User();
         user.setEmail(req.email);
-        user.setPassword(passwordEncoder.encode(req.password));
+        user.setPassword(req.password);
         user.setNbrTentative(0);
         user.setUserRole(roleUser);
 
@@ -75,7 +75,8 @@ public class AuthServiceImpl implements AuthService
             throw new ApiException("Account temporarily blocked");
         }
 
-        if (!passwordEncoder.matches(req.password, user.getPassword())) {
+        if (!req.password.equals(user.getPassword())) 
+        {
 
             user.setNbrTentative(user.getNbrTentative() + 1);
             userRepository.save(user);
@@ -91,11 +92,14 @@ public class AuthServiceImpl implements AuthService
         user.setNbrTentative(0);
         userRepository.save(user);
 
+        String jwt = jwtUtil.generateToken(user.getEmail());
+
         AuthResponse res = new AuthResponse();
-        res.token = UUID.randomUUID(); // session token (sera persisté plus tard)
+        res.token = jwt;
         res.expiresAt = LocalDateTime.now().plusMinutes(30);
 
         return res;
+
     }
 }
 

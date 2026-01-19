@@ -1,52 +1,41 @@
 package com.carte.clouds5spring.security.util;
 
-import io.jsonwebtoken.*;
-import io.jsonwebtoken.security.Keys;
-import org.springframework.stereotype.Component;
-import java.util.Date;
 import java.security.Key;
+import java.util.Date;
+
+import org.springframework.stereotype.Component;
+
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 
 @Component
-public class JwtUtil 
-{
-	private final String SECRET = "maCleSuperSecretePourJWTDe32CaracteresMinimum!@#$";  // 32+ caractères
-	private final Integer EXPIRATION_TIME = 86400000; // 24h
+public class JwtUtil {
 
-	private Key getSigningKey() 
-	{
-		return Keys.hmacShaKeyFor(SECRET.getBytes());
-	}
+    //  en prod → stocker dans application.yml
+    private static final String SECRET =
+            "clouds5spring-secret-key-clouds5spring-256bits";
 
-	public String generateToken(String username) 
-	{
-		return Jwts.builder()
-			.setSubject(username)
-			.setIssuedAt(new Date())
-			.setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-			.signWith(getSigningKey(), SignatureAlgorithm.HS256)
-			.compact();
-	}
+    private static final long EXPIRATION_MS = 30 * 60 * 1000; // 30 min
 
-	public String extractUsername(String token) 
-	{
-		return Jwts.parserBuilder()
-			.setSigningKey(getSigningKey())
-			.build()
-			.parseClaimsJws(token)
-			.getBody()
-			.getSubject();
-	}
+    private final Key key = Keys.hmacShaKeyFor(SECRET.getBytes());
 
-	public boolean validateToken(String token) 
-	{
-		try 
-		{
-			Jwts.parserBuilder().setSigningKey(getSigningKey()).build().parseClaimsJws(token);
-			return true;
-		} 
-		catch (JwtException e) 
-		{
-			return false;
-		}
-	}
+    public String generateToken(String email) {
+
+        return Jwts.builder()
+                .setSubject(email)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_MS))
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    public String extractEmail(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject();
+    }
 }

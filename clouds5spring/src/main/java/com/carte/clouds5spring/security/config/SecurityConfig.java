@@ -60,8 +60,8 @@ public class SecurityConfig
 		return config.getAuthenticationManager();
 	}
 
-	@Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(); // ← CORRECT pour la production
-    }
+	// @Bean
+    // public PasswordEncoder passwordEncoder() {
+    //     return new BCryptPasswordEncoder(); // ← CORRECT pour la production
+    // }
 }

@@ -33,9 +33,14 @@ public class User {
     @Column(name = "nbrTentative")
     private Integer nbrTentative;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    // @ManyToOne(fetch = FetchType.LAZY)
+    // @JoinColumn(name = "id_userRole")
+    // private UserRole userRole;
+
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_userRole")
     private UserRole userRole;
+
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<UserTentativeHistorique> tentatives;

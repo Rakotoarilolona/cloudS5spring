@@ -19,7 +19,7 @@ public class UserSyncController
     @PostMapping("/firebase-users")
     public ApiResponse<Object> syncUsers() throws Exception {
 
-        userSyncService.syncFirebaseUsersToPostgres();
+        userSyncService.syncAndGetAllUsers();
 
         return ApiResponse.success(null);
     }
