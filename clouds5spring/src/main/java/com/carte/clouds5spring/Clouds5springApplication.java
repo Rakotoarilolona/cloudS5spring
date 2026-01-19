@@ -3,7 +3,7 @@ package com.carte.clouds5spring;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "com.carte.clouds5spring")
 public class Clouds5springApplication {
 
 	public static void main(String[] args) {
@@ -11,3 +11,4 @@ public class Clouds5springApplication {
 	}
 
 }
+	

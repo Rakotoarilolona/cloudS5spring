@@ -1,8 +1,18 @@
 package com.carte.clouds5spring.entity;
 
-import jakarta.persistence.*;
+import java.time.LocalDateTime;
 import java.util.List;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import com.carte.clouds5spring.dto.UserDto;
 
 @Entity
@@ -12,14 +22,10 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    private String pseudo;
+
     @Column(name = "email", length = 100)
     private String email;
-
-    @Column(name = "nom", length = 100)
-    private String nom;
-
-    @Column(name = "prenom", length = 100)
-    private String prenom;
 
     @Column(name = "password", length = 100)
     private String password;
@@ -34,6 +40,12 @@ public class User {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<UserTentativeHistorique> tentatives;
 
+    @Column
+    private LocalDateTime blockedAt;
+
+    @Column(name = "firebase_uid", unique = true)
+    private String firebaseUid;
+
     public User() {}
 
     public Integer getId() {
@@ -44,28 +56,20 @@ public class User {
         this.id = id;
     }
 
+    public String getPseudo() {
+        return pseudo;
+    }
+
+    public void setPseudo(String pseudo) {
+        this.pseudo = pseudo;
+    }
+
     public String getEmail() {
         return email;
     }
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getNom() {
-        return nom;
-    }
-
-    public void setNom(String nom) {
-        this.nom = nom;
-    }
-
-    public String getPrenom() {
-        return prenom;
-    }
-
-    public void setPrenom(String prenom) {
-        this.prenom = prenom;
     }
 
     public String getPassword() {
@@ -99,6 +103,21 @@ public class User {
     public void setTentatives(List<UserTentativeHistorique> tentatives) {
         this.tentatives = tentatives;
     }
+
+    public LocalDateTime getBlockedAt() {
+        return blockedAt;
+    }
+
+    public void setBlockedAt(LocalDateTime blockedAt) {
+        this.blockedAt = blockedAt;
+    }
+
+    public String getFirebaseUid() {
+        return firebaseUid;
+    }
+
+    public void setFirebaseUid(String firebaseUid) {
+        this.firebaseUid = firebaseUid;
     public UserDto toDto() {
         if (this == null) {
             return null;

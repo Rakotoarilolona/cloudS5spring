@@ -17,11 +17,9 @@ CREATE TABLE routeStatus(
    PRIMARY KEY(id)
 );
 
-CREATE TABLE user(
+CREATE TABLE user_(
    id SERIAL,
    email VARCHAR(100) ,
-   nom VARCHAR(100) ,
-   prenom VARCHAR(100) ,
    password VARCHAR(100) ,
    nbrTentative INTEGER,
    id_userRole INTEGER,
@@ -34,7 +32,7 @@ CREATE TABLE userTentativeHistorique(
    dateHistorique TIMESTAMP,
    id_user INTEGER,
    PRIMARY KEY(id),
-   FOREIGN KEY(id_user) REFERENCES user(id)
+   FOREIGN KEY(id_user) REFERENCES user_(id)
 );
 
 CREATE TABLE routeProbleme(
@@ -50,6 +48,7 @@ CREATE TABLE routeProbleme(
 
 INSERT INTO userRole(label) VALUES ('manager');
 INSERT INTO userRole(label) VALUES ('utilisateur');
+INSERT INTO userRole(label) VALUES ('admin');
 
 INSERT INTO routeStatus(label, valeur) VALUES ('signale', 1);
 INSERT INTO routeStatus(label, valeur) VALUES ('nouveau', 2);
@@ -61,11 +60,11 @@ INSERT INTO routeEntreprise(label) VALUES ('Entreprise B');
 INSERT INTO routeEntreprise(label) VALUES ('Entreprise C');
 
 
-INSERT INTO user(email, nom, prenom, password, nbrTentative, id_userRole) VALUES
-('manager@gmail.com', 'manager', 'manager', 'manager', 0, 1);
+INSERT INTO user_(email, password, nbrTentative, id_userRole) VALUES
+('manager@gmail.com', 'manager', 0, 1);
 
-INSERT INTO user(email, nom, prenom, password, nbrTentative, id_userRole) VALUES
-('jean@gmail.com', 'Rigo', 'Jean', 'jean123', 0, 2);
+INSERT INTO user_(email, password, nbrTentative, id_userRole) VALUES
+('jean@gmail.com', 'jean123', 0, 2);
 
-INSERT INTO user(email, nom, prenom, password, nbrTentative, id_userRole) VALUES
-('kaiamba@gmail.com', 'Kaiamba', 'Kaiamba', 'kaiamba123', 0, 2);
+INSERT INTO user_(email, password, nbrTentative, id_userRole) VALUES
+('kaiamba@gmail.com', 'kaiamba123', 0, 2);

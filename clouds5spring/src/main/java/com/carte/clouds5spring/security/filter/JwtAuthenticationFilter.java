@@ -1,18 +1,20 @@
 package com.carte.clouds5spring.security.filter;
 
-import com.carte.clouds5spring.security.util.JwtUtil;
+import java.io.IOException;
 
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import java.io.IOException;
+
+import com.carte.clouds5spring.security.util.JwtUtil;
+
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter 
@@ -27,27 +29,46 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter
 	}
 
 	@Override
-	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException 
-	{
-		String authHeader = request.getHeader("Authorization");
-		
-		if (authHeader != null && authHeader.startsWith("Bearer ")) 
-		{
-			String token = authHeader.substring(7);
-			String username = jwtUtil.extractUsername(token);
-			
-			if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) 
-			{
-				UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-				
-				if (jwtUtil.validateToken(token)) 
-				{
-					UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-					SecurityContextHolder.getContext().setAuthentication(authToken);
-				}
-			}
-		}
-		
-		filterChain.doFilter(request, response);
-	}
+protected void doFilterInternal(HttpServletRequest request,
+                                HttpServletResponse response,
+                                FilterChain filterChain)
+        throws ServletException, IOException {
+
+    String authHeader = request.getHeader("Authorization");
+
+    if (authHeader != null && authHeader.startsWith("Bearer ")) {
+
+        String token = authHeader.substring(7);
+
+        // 🔒 Sécurité minimale
+        if (!token.isBlank()) {
+            try {
+                String username = jwtUtil.extractUsername(token);
+
+                if (username != null &&
+                    SecurityContextHolder.getContext().getAuthentication() == null &&
+                    jwtUtil.validateToken(token)) {
+
+                    UserDetails userDetails =
+                            userDetailsService.loadUserByUsername(username);
+
+                    UsernamePasswordAuthenticationToken authToken =
+                            new UsernamePasswordAuthenticationToken(
+                                    userDetails,
+                                    null,
+                                    userDetails.getAuthorities()
+                            );
+
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                }
+            } catch (Exception e) {
+                // Token invalide → on laisse passer sans authentification
+                System.out.println("JWT invalide : " + e.getMessage());
+            }
+        }
+    }
+
+    filterChain.doFilter(request, response);
+}
+
 }
