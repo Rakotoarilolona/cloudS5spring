@@ -10,11 +10,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/admin/firebase-signalements")
-public class FirebaseSignalementController 
+public class SignalementSyncController 
 {
     private final SignalementSyncService signalementSyncService;
 
-    public FirebaseSignalementController(SignalementSyncService service) {
+    public SignalementSyncController(SignalementSyncService service) {
         this.signalementSyncService = service;
     }
 

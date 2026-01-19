@@ -17,10 +17,8 @@ public class UserSyncController
     }
 
     @PostMapping("/firebase-users")
-    public ApiResponse<Object> syncUsers() throws Exception {
-
-        userSyncService.syncAndGetAllUsers();
-
-        return ApiResponse.success(null);
+    public ApiResponse<Object> syncUsers() throws Exception 
+    {
+        return ApiResponse.success(userSyncService.syncAndGetAllUsers());
     }
 }

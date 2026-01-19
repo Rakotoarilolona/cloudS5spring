@@ -13,8 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class UserSyncService {
-
+public class UserSyncService 
+{
     private final FirebaseUserService firebaseUserService;
     private final UserRepository userRepository;
     private final UserRoleRepository roleRepository;
@@ -78,11 +78,13 @@ public class UserSyncService {
     // }
 
      @Transactional
-    public List<UserDto> syncAndGetAllUsers() throws Exception {
+    public List<UserDto> syncAndGetAllUsers() throws Exception 
+    {
         // 1️⃣ Récupérer les utilisateurs depuis Firebase
         List<FirebaseUserDTO> firebaseUsers = firebaseUserService.getAllFirebaseUsersDTO();
 
-        for (FirebaseUserDTO fu : firebaseUsers) {
+        for (FirebaseUserDTO fu : firebaseUsers) 
+        {
             User user = userRepository.findByFirebaseUid(fu.getUid()).orElse(null);
 
             if (user == null) {

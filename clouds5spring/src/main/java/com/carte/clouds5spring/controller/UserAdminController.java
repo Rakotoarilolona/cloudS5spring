@@ -47,7 +47,7 @@ public class UserAdminController
         );
     }
 
-    @PutMapping("/users/me")
+    @PutMapping("/me")
     public ResponseEntity<ApiResponse<Object>> updateMyProfile(
             @RequestBody UserUpdateRequest req,
             Authentication authentication) {
@@ -59,7 +59,7 @@ public class UserAdminController
         return ResponseEntity.ok(ApiResponse.success(null));
     }
 
-    @PutMapping("/admin/users/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<Object>> updateUser(
             @PathVariable Integer id,
             @RequestBody UserUpdateRequest req) {

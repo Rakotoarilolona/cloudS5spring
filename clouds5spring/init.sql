@@ -46,6 +46,16 @@ CREATE TABLE routeProbleme(
    FOREIGN KEY(id_routeStatus) REFERENCES routeStatus(id)
 );
 
+CREATE TABLE historiqueStatusRoute(
+   id SERIAL,
+   dateHistorique TIMESTAMP,
+   id_routeProbleme INTEGER,
+   id_routeStatus INTEGER,
+   PRIMARY KEY(id),
+   FOREIGN KEY(id_routeProbleme) REFERENCES routeProbleme(id),
+   FOREIGN KEY(id_routeStatus) REFERENCES routeStatus(id)
+);
+
 INSERT INTO userRole(label) VALUES ('manager');
 INSERT INTO userRole(label) VALUES ('utilisateur');
 INSERT INTO userRole(label) VALUES ('admin');
