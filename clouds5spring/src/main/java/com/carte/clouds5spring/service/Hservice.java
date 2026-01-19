@@ -35,7 +35,7 @@ public class Hservice {
     }
 
     public String getProblemeDetail(String id) {
-        Optional<RouteProbleme> probleme = routeProblemeRepository.findById(Long.parseLong(id));
+        Optional<RouteProbleme> probleme = routeProblemeRepository.findById(Integer.valueOf(id));
         if (probleme.isEmpty()) {
             throw new RuntimeException("Data not found for id: " + id);
         }

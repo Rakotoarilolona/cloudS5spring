@@ -107,6 +107,8 @@ public class RouteProbleme {
     }
     public void setUser(User user) {
         this.user = user;
+    }
+
     public RouteProblemeDto toDto() {
     if (this == null) {
         return null;

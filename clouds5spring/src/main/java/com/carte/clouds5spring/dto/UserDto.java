@@ -1,11 +1,11 @@
 package com.carte.clouds5spring.dto;
 
 import com.carte.clouds5spring.entity.User;
-public class UserDto {
+public class UserDto 
+{
     private Integer id;
     private String email;
-    private String nom;
-    private String prenom;
+    private String pseudo;
     private Integer nbrTentative;
     private Integer userRoleId;
 
@@ -27,20 +27,12 @@ public class UserDto {
         this.email = email;
     }
 
-    public String getNom() {
-        return nom;
+    public String getPseudo() {
+        return pseudo;
     }
 
-    public void setNom(String nom) {
-        this.nom = nom;
-    }
-
-    public String getPrenom() {
-        return prenom;
-    }
-
-    public void setPrenom(String prenom) {
-        this.prenom = prenom;
+    public void setPseudo(String pseudo) {
+        this.pseudo = pseudo;
     }
 
     public Integer getNbrTentative() {
@@ -58,7 +50,9 @@ public class UserDto {
     public void setUserRoleId(Integer userRoleId) {
         this.userRoleId = userRoleId;
     }
-    public User toEntity() {
+
+    public User toEntity() 
+    {
         if (this == null) {
             return null;
         }
@@ -70,11 +64,8 @@ public class UserDto {
         if(this.getEmail() != null) {
             entity.setEmail(this.getEmail());
         }
-        if(this.getNom() != null) {
-            entity.setNom(this.getNom());
-        }
-        if(this.getPrenom() != null) {
-            entity.setPrenom(this.getPrenom());
+        if(this.getPseudo() != null) {
+            entity.setPseudo(this.getPseudo());
         }
         if(this.getNbrTentative() != null) {
             entity.setNbrTentative(this.getNbrTentative());

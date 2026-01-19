@@ -26,28 +26,30 @@ public class SecurityConfig
 		http
 			.csrf(csrf -> csrf.disable())
 			.authorizeHttpRequests(auth -> auth
-				.anyRequest().permitAll()  // ← TOUT EST AUTORISÉ
+				.requestMatchers("/test").authenticated()
+				.anyRequest().permitAll() // ← TOUT EST AUTORISÉ
 			);
+			// );
 			// .authorizeHttpRequests(auth -> auth
 			// 	.requestMatchers("/auth/**").permitAll()
 			// 	.requestMatchers("/admin/**").hasRole("admin")
 			// 	.anyRequest().authenticated()
 			// );
-				.requestMatchers(
-					"/api/data/routeprobleme",
-					"/api/data/routeprobleme/dashboard",
-					"/api/data/routeprobleme/{id}",
-					"/swagger-ui.html",
-					"/swagger-ui/index.html",
-					"/swagger-ui/**",
-					"/api-docs",
-					"/api-docs/**",
-					"/v3/api-docs",
-					"/v3/api-docs/**"
-				).permitAll()
-				.anyRequest().authenticated())
-			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-			.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+				// .requestMatchers(
+				// 	"/api/data/routeprobleme",
+				// 	"/api/data/routeprobleme/dashboard",
+				// 	"/api/data/routeprobleme/{id}",
+				// 	"/swagger-ui.html",
+				// 	"/swagger-ui/index.html",
+				// 	"/swagger-ui/**",
+				// 	"/api-docs",
+				// 	"/api-docs/**",
+				// 	"/v3/api-docs",
+				// 	"/v3/api-docs/**"
+				// ).permitAll()
+				// .anyRequest().authenticated());
+			// .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+			// .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 		
 		return http.build();
 	}

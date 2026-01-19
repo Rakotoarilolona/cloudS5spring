@@ -118,7 +118,10 @@ public class User {
 
     public void setFirebaseUid(String firebaseUid) {
         this.firebaseUid = firebaseUid;
-    public UserDto toDto() {
+    }
+
+    public UserDto toDto() 
+    {
         if (this == null) {
             return null;
         }
@@ -130,11 +133,8 @@ public class User {
         if(this.getEmail() != null) {
             dto.setEmail(this.getEmail());
         }
-        if(this.getNom() != null) {
-            dto.setNom(this.getNom());
-        }
-        if(this.getPrenom() != null) {
-            dto.setPrenom(this.getPrenom());
+        if(this.getPseudo() != null) {
+            dto.setPseudo(this.getPseudo());
         }
         if(this.getNbrTentative() != null) {
             dto.setNbrTentative(this.getNbrTentative());
