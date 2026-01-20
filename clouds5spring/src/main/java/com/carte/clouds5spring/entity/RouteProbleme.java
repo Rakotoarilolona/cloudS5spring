@@ -162,6 +162,7 @@ public class RouteProbleme {
         }
         if(this.getRouteStatus() != null && this.getRouteStatus().getId() != null) {
             dto.setRouteStatusId(this.getRouteStatus().getId());
+            dto.setRouteStatusName(this.getRouteStatus().getLabel());
         }
         if(this.getLongitude() != null) {
             dto.setLongitude(this.getLongitude());
@@ -172,6 +173,7 @@ public class RouteProbleme {
         if(this.getProblemeDescription() != null) {
             dto.setProblemeDescription(this.getProblemeDescription());
         }
+
         return dto;
     }
 }

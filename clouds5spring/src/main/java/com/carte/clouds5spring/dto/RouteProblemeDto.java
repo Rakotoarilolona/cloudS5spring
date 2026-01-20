@@ -10,7 +10,18 @@ public class RouteProblemeDto {
     private BigDecimal budget;
     private Integer routeEntrepriseId;
     private Integer routeStatusId;
+    private String routeStatusName;
+    private String problemeDescription;
 
+
+    public String getRouteStatusName() {
+        return routeStatusName;
+    }
+
+    public void setRouteStatusName(String routeStatusName) {
+        this.routeStatusName = routeStatusName;
+    }
+    
     public String getProblemeDescription() {
         return problemeDescription;
     }
@@ -18,7 +29,6 @@ public class RouteProblemeDto {
     public void setProblemeDescription(String problemeDescription) {
         this.problemeDescription = problemeDescription;
     }
-    private String problemeDescription;
 
 
     public BigDecimal getLongitude() {
