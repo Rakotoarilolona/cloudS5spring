@@ -45,6 +45,14 @@ public class RouteProbleme {
     @JoinColumn(name = "id_user")
     private User user;
 
+    @Column(name = "longitude", precision = 15, scale = 6)
+    private BigDecimal longitude;
+
+    @Column(name = "latitude", precision = 15, scale = 6)
+    private BigDecimal latitude;
+
+
+
     public RouteProbleme() {}
 
     public Integer getId() {
@@ -109,12 +117,26 @@ public class RouteProbleme {
         this.user = user;
     }
 
-    public RouteProblemeDto toDto() {
-    if (this == null) {
-        return null;
+    public BigDecimal getLongitude() {
+        return longitude;
     }
-    
-    RouteProblemeDto dto = new RouteProblemeDto();
+    public void setLongitude(BigDecimal longitude) {
+        this.longitude = longitude;
+    }
+    public BigDecimal getLatitude() {
+        return latitude;
+    }
+    public void setLatitude(BigDecimal latitude) {
+        this.latitude = latitude;
+    }
+
+    public RouteProblemeDto toDto() {
+        if (this == null) {
+            return null;
+        }
+
+        
+        RouteProblemeDto dto = new RouteProblemeDto();
         if(this.getId() != null) {
             dto.setId(this.getId());
         }
@@ -129,6 +151,12 @@ public class RouteProbleme {
         }
         if(this.getRouteStatus() != null && this.getRouteStatus().getId() != null) {
             dto.setRouteStatusId(this.getRouteStatus().getId());
+        }
+        if(this.getLongitude() != null) {
+            dto.setLongitude(this.getLongitude());
+        }
+        if(this.getLatitude() != null) {
+            dto.setLatitude(this.getLatitude());
         }
         return dto;
     }
