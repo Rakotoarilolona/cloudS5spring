@@ -56,10 +56,6 @@ public class RouteDashboard {
                     pourcentage++;
                 }
             }
-            if(problemeList.size()>0)
-            {
-                pourcentage=(pourcentage/problemeList.size())*100;
-            }
             avancementMap.put(statusList.get(i).getLabel(), pourcentage);
         }
         return avancementMap;
