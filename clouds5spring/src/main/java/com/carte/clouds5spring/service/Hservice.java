@@ -1,11 +1,14 @@
 package com.carte.clouds5spring.service;
 
 import com.carte.clouds5spring.dto.RouteProblemeDto;
+import com.carte.clouds5spring.entity.RouteEntreprise;
 import com.carte.clouds5spring.entity.RouteProbleme;
 import com.carte.clouds5spring.exception.NotFoundException;
 
 import com.carte.clouds5spring.entity.RouteStatus;
 import com.carte.clouds5spring.dto.RouteStatusDto;
+
+import com.carte.clouds5spring.dto.RouteEntrepriseDto;
 
 import com.carte.clouds5spring.hutil.Hjson;
 import com.carte.clouds5spring.repository.RouteProblemeRepository;
@@ -58,6 +61,18 @@ public class Hservice {
         if (problemeList.isEmpty()) {
             throw new NotFoundException("No data found");
         }
+        List<RouteEntreprise> entrepriseListEntity = new ArrayList<>();
+        for(RouteProbleme probleme : problemeList) {
+            RouteEntreprise entreprise = probleme.getRouteEntreprise();
+            if (entreprise != null && !entrepriseListEntity.contains(entreprise)) {
+                entrepriseListEntity.add(entreprise);
+            }
+        }
+        List<RouteEntrepriseDto> entrepriseList = new ArrayList<>(entrepriseListEntity.size());
+        for (int i = 0; i < entrepriseListEntity.size(); i++) {
+            entrepriseList.add(entrepriseListEntity.get(i).toDto());
+        }
+
         List<RouteProblemeDto> dtoList = new ArrayList<>(problemeList.size());
         for (int i = 0; i < problemeList.size(); i++) {
             dtoList.add(problemeList.get(i).toDto());
@@ -67,7 +82,7 @@ public class Hservice {
         for (int i = 0; i < statusList.size(); i++) {
             statusDtoList.add(statusList.get(i).toDto());
         }
-        RouteDashboard routes = RouteDashboard.calcul(dtoList, statusDtoList);
+        RouteDashboard routes = RouteDashboard.calcul(dtoList, statusDtoList, entrepriseList);
         String data = Hjson.toJson(routes);
         return Hjson.formatJson(data, "success", "Data fetched successfully");
     }

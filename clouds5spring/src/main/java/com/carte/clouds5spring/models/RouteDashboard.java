@@ -11,11 +11,13 @@ public class RouteDashboard {
     private Map<String, Double> avancement;
     private double totalSurface;
     private double totalBudget;
-    public RouteDashboard(int totalProblemes, Map<String, Double> avancement, double totalSurface, double totalBudget) {
+    private List<RouteEntrepriseDto> entrepriseList;
+    public RouteDashboard(int totalProblemes, Map<String, Double> avancement, double totalSurface, double totalBudget,List<RouteEntrepriseDto> entrepriseList) {
         this.totalProblemes = totalProblemes;
         this.avancement = avancement;
         this.totalSurface = totalSurface;
         this.totalBudget = totalBudget;
+        this.entrepriseList = entrepriseList;
     }
     public int getTotalProblemes() {
         return totalProblemes;
@@ -60,10 +62,10 @@ public class RouteDashboard {
         }
         return avancementMap;
     }
-    public static RouteDashboard calcul(List<RouteProblemeDto> problemeList,List<RouteStatusDto> statusList)
+    public static RouteDashboard calcul(List<RouteProblemeDto> problemeList,List<RouteStatusDto> statusList,List<RouteEntrepriseDto> entrepriseList)
     {
         if(problemeList == null || problemeList.isEmpty()) {
-            return new RouteDashboard(0, null, 0.0, 0.0);
+            return new RouteDashboard(0, null, 0.0, 0.0, null);
         }
         // Logique de calcul des indicateurs du tableau de bord
 
@@ -75,7 +77,7 @@ public class RouteDashboard {
             sommeBudget += probleme.getBudget() != null ? probleme.getBudget().doubleValue() : 0.0;
         }
         
-        return new RouteDashboard(totalProblemes, calculateAvancement(problemeList, statusList), sommeSurface, sommeBudget);   
+        return new RouteDashboard(totalProblemes, calculateAvancement(problemeList, statusList), sommeSurface, sommeBudget, entrepriseList);   
     }
 
     
