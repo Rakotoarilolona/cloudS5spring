@@ -40,10 +40,14 @@ CREATE TABLE routeProbleme(
    surface NUMERIC(15,2)  ,
    budget NUMERIC(15,2)  ,
    id_routeEntreprise INTEGER,
+   longitude NUMERIC(15,6) ,
+   latitude NUMERIC(15,6) ,
    id_routeStatus INTEGER,
+   id_user INTEGER,
    PRIMARY KEY(id),
    FOREIGN KEY(id_routeEntreprise) REFERENCES routeEntreprise(id),
-   FOREIGN KEY(id_routeStatus) REFERENCES routeStatus(id)
+   FOREIGN KEY(id_routeStatus) REFERENCES routeStatus(id),
+   FOREIGN KEY(id_user) REFERENCES user_(id)
 );
 
 CREATE TABLE historiqueStatusRoute(

@@ -10,6 +10,23 @@ public class RouteProblemeDto {
     private BigDecimal budget;
     private Integer routeEntrepriseId;
     private Integer routeStatusId;
+    public BigDecimal getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(BigDecimal longitude) {
+        this.longitude = longitude;
+    }
+    private BigDecimal longitude;
+    private BigDecimal latitude;
+
+    public BigDecimal getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(BigDecimal latitude) {
+        this.latitude = latitude;
+    }
 
     public RouteProblemeDto() {}
 
@@ -66,6 +83,12 @@ public class RouteProblemeDto {
         }
         if(this.getBudget() != null) {
             entity.setBudget(this.getBudget());
+        }
+        if(this.getLongitude() != null) {
+            entity.setLongitude(this.getLongitude());
+        }
+        if(this.getLatitude() != null) {
+            entity.setLatitude(this.getLatitude());
         }
         return entity;
     }
