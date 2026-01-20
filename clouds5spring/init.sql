@@ -41,6 +41,7 @@ CREATE TABLE routeProbleme(
    budget NUMERIC(15,2)  ,
    id_routeEntreprise INTEGER,
    longitude NUMERIC(15,6) ,
+   problemeDescription VARCHAR(255) ,
    latitude NUMERIC(15,6) ,
    id_routeStatus INTEGER,
    id_user INTEGER,

@@ -51,6 +51,17 @@ public class RouteProbleme {
     @Column(name = "latitude", precision = 15, scale = 6)
     private BigDecimal latitude;
 
+    public String getProblemeDescription() {
+        return problemeDescription;
+    }
+
+    public void setProblemeDescription(String problemeDescription) {
+        this.problemeDescription = problemeDescription;
+    }
+
+    @Column(name = "problemeDescription", length = 255)
+    private String problemeDescription;
+
 
 
     public RouteProbleme() {}
