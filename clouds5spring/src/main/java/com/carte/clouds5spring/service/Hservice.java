@@ -2,6 +2,7 @@ package com.carte.clouds5spring.service;
 
 import com.carte.clouds5spring.dto.RouteProblemeDto;
 import com.carte.clouds5spring.entity.RouteProbleme;
+import com.carte.clouds5spring.exception.NotFoundException;
 
 import com.carte.clouds5spring.entity.RouteStatus;
 import com.carte.clouds5spring.dto.RouteStatusDto;
@@ -30,7 +31,7 @@ public class Hservice {
     public String getProblemeRoutier() {
         List<RouteProbleme> problemeList = routeProblemeRepository.findAll();
         if (problemeList.isEmpty()) {
-            throw new RuntimeException("No data found");
+            throw new NotFoundException("No data found");
         }
 
         List<RouteProblemeDto> dtoList = new ArrayList<>(problemeList.size());
@@ -45,7 +46,7 @@ public class Hservice {
     public String getProblemeDetail(String id) {
         Optional<RouteProbleme> probleme = routeProblemeRepository.findById(Integer.valueOf(id));
         if (probleme.isEmpty()) {
-            throw new RuntimeException("Data not found for id: " + id);
+            throw new NotFoundException("Data not found for id: " + id);
         }
         RouteProblemeDto dto = probleme.get().toDto();
         String data = Hjson.toJson(dto);
@@ -55,7 +56,7 @@ public class Hservice {
     public String getProblemeDashboard() {
         List<RouteProbleme> problemeList = routeProblemeRepository.findAll();
         if (problemeList.isEmpty()) {
-            throw new RuntimeException("No data found");
+            throw new NotFoundException("No data found");
         }
         List<RouteProblemeDto> dtoList = new ArrayList<>(problemeList.size());
         for (int i = 0; i < problemeList.size(); i++) {
