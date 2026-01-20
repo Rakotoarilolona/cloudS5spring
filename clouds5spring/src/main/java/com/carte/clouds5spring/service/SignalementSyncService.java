@@ -39,7 +39,7 @@ public class SignalementSyncService
             dto.setBudget(getBigDecimal(data, "budget"));
             dto.setStatus(getString(data, "status", "INCONNU"));
             dto.setEntreprise(getString(data, "entreprise", "INCONNU"));
-
+            
             dtoList.add(dto);
         }
 

@@ -13,6 +13,9 @@ public class RouteProblemeDto {
     private Integer routeStatusId;
     private String routeStatusName;
     private String problemeDescription;
+    private BigDecimal longitude;
+    private BigDecimal latitude;
+
 
     public String getRouteEntrepriseName() {
         return routeEntrepriseName;
@@ -46,8 +49,6 @@ public class RouteProblemeDto {
     public void setLongitude(BigDecimal longitude) {
         this.longitude = longitude;
     }
-    private BigDecimal longitude;
-    private BigDecimal latitude;
 
     public BigDecimal getLatitude() {
         return latitude;
