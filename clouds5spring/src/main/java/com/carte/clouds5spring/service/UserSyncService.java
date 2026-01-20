@@ -9,11 +9,14 @@ import com.carte.clouds5spring.repository.UserRepository;
 import com.carte.clouds5spring.repository.UserRoleRepository;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.WriteResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.UserRecord;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -126,27 +129,52 @@ public class UserSyncService
         return dtoList;
     }
 
+    public void createAuthUser(User user) throws Exception {
+            UserRecord.CreateRequest request = new UserRecord.CreateRequest()
+                .setEmail(user.getEmail())
+                .setEmailVerified(false)
+                .setPassword(user.getPassword()) 
+                .setDisabled(false);
+
+            UserRecord userRecord = FirebaseAuth.getInstance().createUser(request);
+    }
+
     @Transactional
-    public void syncUsersToFirebase() throws Exception {
+    public String syncUsersToFirebase() throws Exception {
+
+        try {
         // 1️⃣ Récupérer les utilisateurs PostgreSQL
         List<User> users = userRepository.findAll();
 
         Firestore firestore = FirebaseConfig.getFirestore();
 
         for (User user : users) {
-            String docId = String.valueOf(user.getId());
+                Map<String, Object> data = new HashMap<>();
+                data.put("email", user.getEmail());
+                data.put("password", user.getPassword());
+                data.put("pseudo", user.getPseudo());
+                data.put("role", user.getUserRole() != null ? user.getUserRole().getLabel() : null);
+                data.put("nbrTentative", user.getNbrTentative());
+                data.put("firebaseUid", user.getFirebaseUid());
+                data.put("updatedAt", new java.util.Date());
 
-            WriteResult result = firestore.collection("users")
-                    .document(docId)
-                    .set(Map.of(
-                            "email", user.getEmail(),
-                            "pseudo", user.getPseudo(),
-                            "role", user.getUserRole() != null ? user.getUserRole().getLabel() : null,
-                            "nbrTentative", user.getNbrTentative(),
-                            "firebaseUid", user.getFirebaseUid(),
-                            "updatedAt", new java.util.Date()
-                    ))
+                WriteResult result = firestore.collection("users")
+                    .document(String.valueOf(user.getId()))
+                    .set(data)
                     .get();
+            try {
+                createAuthUser(user);
+            } catch (Exception e) {
+                if (!e.getMessage().contains("EMAIL_EXISTS")) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return "mety"; }
+        catch (Exception e) {
+            e.printStackTrace();
+            throw e;
         }
     }
 }

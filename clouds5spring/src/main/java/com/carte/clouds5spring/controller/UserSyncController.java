@@ -24,7 +24,7 @@ public class UserSyncController
     }
 
     @GetMapping("/users")
-    public void syncUserPostgres() throws Exception {
-        userSyncService.syncUsersToFirebase();
+    public ApiResponse <Object> syncUserPostgres() throws Exception {
+        return ApiResponse.success(userSyncService.syncUsersToFirebase());
     }
 }
