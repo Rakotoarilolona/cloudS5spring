@@ -84,6 +84,11 @@ INSERT INTO user_(email, password, nbrTentative, id_userRole) VALUES
 INSERT INTO user_(email, password, nbrTentative, id_userRole) VALUES
 ('kaiamba@gmail.com', 'kaiamba123', 0, 2);
 
+INSERT INTO user_(email, password, nbrTentative, id_userRole) VALUES
+('test1@gmail.com', 'test123', 0, 2);
+
+INSERT INTO user_(email, password, nbrTentative, id_userRole) VALUES
+('test2@gmail.com', 'test123', 0, 2);
 
 UPDATE user_
 SET password = 'manager4'

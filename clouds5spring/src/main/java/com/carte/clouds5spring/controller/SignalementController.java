@@ -7,24 +7,29 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.carte.clouds5spring.dto.ApiResponse;
+import com.carte.clouds5spring.dto.FirebaseRouteProblemeDTO;
 import com.carte.clouds5spring.entity.RouteProbleme;
 import com.carte.clouds5spring.service.RouteProblemeService;
+import com.carte.clouds5spring.service.SignalementSyncService;
 
 @RestController
 @RequestMapping("/signalements")
 public class SignalementController {
 
     private final RouteProblemeService routeProblemeService;
+    private final SignalementSyncService signalementSyncService;
 
-    public SignalementController(RouteProblemeService routeProblemeService) {
+    public SignalementController(RouteProblemeService routeProblemeService, SignalementSyncService signalementSyncService) {
         this.routeProblemeService = routeProblemeService;
+        this.signalementSyncService = signalementSyncService;
     }
 
     // 🔹 Liste de tous les signalements
     @GetMapping
-    public ResponseEntity<ApiResponse<List<RouteProbleme>>> getAll() {
+    public ResponseEntity<ApiResponse<List<FirebaseRouteProblemeDTO>>> getAll() throws Exception {
         return ResponseEntity.ok(
-            ApiResponse.success(routeProblemeService.getAll())
+            // ApiResponse.success(routeProblemeService.getAll())
+            ApiResponse.success(signalementSyncService.getAllSignalementsFromFirebase())
         );
     }
 

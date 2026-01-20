@@ -22,6 +22,30 @@ public class SignalementSyncService
         this.routeProblemeRepository = routeProblemeRepository;
     }
 
+    public List<FirebaseRouteProblemeDTO> getAllSignalementsFromFirebase() throws Exception {
+        Firestore db = FirestoreClient.getFirestore();
+        CollectionReference ref = db.collection("signalements");
+
+        List<FirebaseRouteProblemeDTO> dtoList = new ArrayList<>();
+
+        for (QueryDocumentSnapshot doc : ref.get().get().getDocuments()) {
+            Map<String, Object> data = doc.getData();
+            data.put("firebaseId", doc.getId()); // IMPORTANT pour DTO
+
+            // --- Construire le DTO pour affichage JSON ---
+            FirebaseRouteProblemeDTO dto = new FirebaseRouteProblemeDTO();
+            dto.setFirebaseId(getString(data, "firebaseId", ""));
+            dto.setSurface(getBigDecimal(data, "surface"));
+            dto.setBudget(getBigDecimal(data, "budget"));
+            dto.setStatus(getString(data, "status", "INCONNU"));
+            dto.setEntreprise(getString(data, "entreprise", "INCONNU"));
+
+            dtoList.add(dto);
+        }
+
+        return dtoList; // renvoyer les DTO pour affichage JSON
+    }
+
     public List<FirebaseRouteProblemeDTO> syncAndGetAllSignalements() throws Exception 
     {
         Firestore db = FirestoreClient.getFirestore();
