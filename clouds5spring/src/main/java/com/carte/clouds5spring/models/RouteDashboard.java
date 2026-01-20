@@ -66,12 +66,8 @@ public class RouteDashboard {
             return new RouteDashboard(0, null, 0.0, 0.0);
         }
         // Logique de calcul des indicateurs du tableau de bord
-        int totalProblemes = 150; // Exemple de valeur
-        double avancement = 75.5; // Exemple de valeur en pourcentage
-        double totalSurface = 1200.0; // Exemple de valeur en km²
-        double totalBudget = 500000.0; // Exemple de valeur en euros
 
-        totalProblemes = problemeList.size();
+        int totalProblemes = problemeList.size();
         double sommeSurface = 0.0;
         double sommeBudget = 0.0;
         for (RouteProblemeDto probleme : problemeList) {
