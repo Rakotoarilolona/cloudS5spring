@@ -9,10 +9,18 @@ public class RouteProblemeDto {
     private BigDecimal surface;
     private BigDecimal budget;
     private Integer routeEntrepriseId;
+    private String routeEntrepriseName;
     private Integer routeStatusId;
     private String routeStatusName;
     private String problemeDescription;
 
+    public String getRouteEntrepriseName() {
+        return routeEntrepriseName;
+    }
+
+    public void setRouteEntrepriseName(String routeEntrepriseName) {
+        this.routeEntrepriseName = routeEntrepriseName;
+    }
 
     public String getRouteStatusName() {
         return routeStatusName;
@@ -21,7 +29,7 @@ public class RouteProblemeDto {
     public void setRouteStatusName(String routeStatusName) {
         this.routeStatusName = routeStatusName;
     }
-    
+
     public String getProblemeDescription() {
         return problemeDescription;
     }

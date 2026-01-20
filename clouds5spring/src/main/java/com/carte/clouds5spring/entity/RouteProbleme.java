@@ -159,6 +159,7 @@ public class RouteProbleme {
         }
         if(this.getRouteEntreprise() != null && this.getRouteEntreprise().getId() != null) {
             dto.setRouteEntrepriseId(this.getRouteEntreprise().getId());
+            dto.setRouteEntrepriseName(this.getRouteEntreprise().getLabel());
         }
         if(this.getRouteStatus() != null && this.getRouteStatus().getId() != null) {
             dto.setRouteStatusId(this.getRouteStatus().getId());
