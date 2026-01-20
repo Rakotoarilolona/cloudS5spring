@@ -169,6 +169,9 @@ public class RouteProbleme {
         if(this.getLatitude() != null) {
             dto.setLatitude(this.getLatitude());
         }
+        if(this.getProblemeDescription() != null) {
+            dto.setProblemeDescription(this.getProblemeDescription());
+        }
         return dto;
     }
 }

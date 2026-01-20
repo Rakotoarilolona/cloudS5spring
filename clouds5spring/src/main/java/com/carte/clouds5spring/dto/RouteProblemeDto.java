@@ -10,6 +10,17 @@ public class RouteProblemeDto {
     private BigDecimal budget;
     private Integer routeEntrepriseId;
     private Integer routeStatusId;
+
+    public String getProblemeDescription() {
+        return problemeDescription;
+    }
+
+    public void setProblemeDescription(String problemeDescription) {
+        this.problemeDescription = problemeDescription;
+    }
+    private String problemeDescription;
+
+
     public BigDecimal getLongitude() {
         return longitude;
     }
@@ -89,6 +100,9 @@ public class RouteProblemeDto {
         }
         if(this.getLatitude() != null) {
             entity.setLatitude(this.getLatitude());
+        }
+        if(this.getProblemeDescription() != null) {
+            entity.setProblemeDescription(this.getProblemeDescription());
         }
         return entity;
     }
