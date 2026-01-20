@@ -1,16 +1,21 @@
 package com.carte.clouds5spring.service;
 
 import com.carte.clouds5spring.dto.UserDto;
+import com.carte.clouds5spring.config.FirebaseConfig;
 import com.carte.clouds5spring.dto.FirebaseUserDTO;
 import com.carte.clouds5spring.entity.User;
 import com.carte.clouds5spring.entity.UserRole;
 import com.carte.clouds5spring.repository.UserRepository;
 import com.carte.clouds5spring.repository.UserRoleRepository;
+import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.WriteResult;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class UserSyncService 
@@ -119,5 +124,29 @@ public class UserSyncService
         }
 
         return dtoList;
+    }
+
+    @Transactional
+    public void syncUsersToFirebase() throws Exception {
+        // 1️⃣ Récupérer les utilisateurs PostgreSQL
+        List<User> users = userRepository.findAll();
+
+        Firestore firestore = FirebaseConfig.getFirestore();
+
+        for (User user : users) {
+            String docId = String.valueOf(user.getId());
+
+            WriteResult result = firestore.collection("users")
+                    .document(docId)
+                    .set(Map.of(
+                            "email", user.getEmail(),
+                            "pseudo", user.getPseudo(),
+                            "role", user.getUserRole() != null ? user.getUserRole().getLabel() : null,
+                            "nbrTentative", user.getNbrTentative(),
+                            "firebaseUid", user.getFirebaseUid(),
+                            "updatedAt", new java.util.Date()
+                    ))
+                    .get();
+        }
     }
 }
