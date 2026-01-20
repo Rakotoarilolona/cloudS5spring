@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import java.util.List;
 
 import com.carte.clouds5spring.dto.UserRoleDto;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "userRole")
@@ -16,6 +17,7 @@ public class UserRole {
     private String label;
 
     @OneToMany(mappedBy = "userRole", fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<User> users;
 
     public UserRole() {}
