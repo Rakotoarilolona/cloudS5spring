@@ -56,6 +56,7 @@ public class AuthServiceImpl implements AuthService
         user.setPassword(req.password);
         user.setNbrTentative(0);
         user.setUserRole(roleUser);
+        user.setPseudo(req.pseudo);
 
         userRepository.save(user);
     }

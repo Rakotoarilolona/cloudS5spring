@@ -13,8 +13,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.carte.clouds5spring.dto.ApiResponse;
+import com.carte.clouds5spring.dto.RegisterRequest;
 import com.carte.clouds5spring.dto.UserUpdateRequest;
 import com.carte.clouds5spring.entity.User;
+import com.carte.clouds5spring.service.AuthService;
 import com.carte.clouds5spring.service.UserService;
 
 @RestController
@@ -22,9 +24,11 @@ import com.carte.clouds5spring.service.UserService;
 public class UserAdminController 
 {
     private final UserService userService;
+    private final AuthService authService;
 
-    public UserAdminController(UserService userService) {
+    public UserAdminController(UserService userService, AuthService authService) {
         this.userService = userService;
+        this.authService = authService;
     }
 
     @PostMapping("/{id}/unblock")
@@ -69,6 +73,17 @@ public class UserAdminController
         return ResponseEntity.ok(ApiResponse.success(null));
     }
 
+    @PostMapping("/create")
+    public ResponseEntity<ApiResponse<Object>> register(
+            @RequestBody RegisterRequest req) 
+    {
+        authService.register(req);
+
+        return ResponseEntity.ok(
+            ApiResponse.success(null)
+        );
+    }
+     
 
 
 }
