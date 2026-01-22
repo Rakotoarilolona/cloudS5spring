@@ -11,6 +11,7 @@ import com.carte.clouds5spring.dto.FirebaseRouteProblemeDTO;
 import com.carte.clouds5spring.entity.RouteProbleme;
 import com.carte.clouds5spring.service.RouteProblemeService;
 import com.carte.clouds5spring.service.SignalementSyncService;
+import io.swagger.v3.oas.annotations.Operation;
 
 @RestController
 @RequestMapping("/signalements")
@@ -24,22 +25,28 @@ public class SignalementController {
         this.signalementSyncService = signalementSyncService;
     }
 
-    // 🔹 Liste de tous les signalements
+
+    // Liste Signalements FireBase
     @GetMapping
-    public ResponseEntity<ApiResponse<List<FirebaseRouteProblemeDTO>>> getAll() throws Exception {
-        return ResponseEntity.ok(
-            // ApiResponse.success(routeProblemeService.getAll())
-            ApiResponse.success(signalementSyncService.getAllSignalementsFromFirebase())
-        );
+    @Operation(summary = "Liste des signalements récupérés depuis Firebase")
+    public ApiResponse<List<FirebaseRouteProblemeDTO>> getAll() throws Exception {
+        return ApiResponse.success(signalementSyncService.syncAndGetAllSignalements());
+    }
+
+
+    @GetMapping("/envoi")
+    @Operation(summary = "Envoi des signalements locals vers FireBase")
+    public ApiResponse<String> envoiFireBase () throws Exception {
+        signalementSyncService.syncLocalToFirebase();
+        return ApiResponse.success("Synchronisé avec succes");
     }
 
     // 🔹 Détails d’un signalement
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<RouteProbleme>> getById(
-            @PathVariable Integer id) {
-
-        return ResponseEntity.ok(
-            ApiResponse.success(routeProblemeService.getById(id))
-        );
+    public ApiResponse<RouteProbleme> getById(@PathVariable Integer id) {
+        return ApiResponse.success(routeProblemeService.getById(id));
     }
+
+
+
 }
