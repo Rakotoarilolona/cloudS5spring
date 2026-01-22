@@ -2,7 +2,9 @@ package com.carte.clouds5spring.service;
 
 import com.carte.clouds5spring.dto.FirebaseRouteProblemeDTO;
 import com.carte.clouds5spring.entity.RouteProbleme;
+import com.carte.clouds5spring.repository.RouteEntrepriseRepository;
 import com.carte.clouds5spring.repository.RouteProblemeRepository;
+import com.carte.clouds5spring.repository.RouteStatusRepository;
 import com.google.cloud.firestore.*;
 import com.google.firebase.cloud.FirestoreClient;
 import org.springframework.stereotype.Service;
@@ -18,11 +20,19 @@ public class SignalementSyncService
 {
     private final RouteProblemeRepository routeProblemeRepository;
 
-    public SignalementSyncService(RouteProblemeRepository routeProblemeRepository) {
+    private final RouteEntrepriseRepository entrepriseRepository;
+
+    private final RouteStatusRepository statusRepository;
+
+    public SignalementSyncService(RouteProblemeRepository routeProblemeRepository, 
+        RouteEntrepriseRepository r, RouteStatusRepository s) {
         this.routeProblemeRepository = routeProblemeRepository;
+        this.entrepriseRepository = r;
+        this.statusRepository = s;
     }
 
-    public List<FirebaseRouteProblemeDTO> getAllSignalementsFromFirebase() throws Exception {
+
+    public List<FirebaseRouteProblemeDTO> syncAndGetAllSignalements() throws Exception {
         Firestore db = FirestoreClient.getFirestore();
         CollectionReference ref = db.collection("signalements");
 
@@ -30,63 +40,61 @@ public class SignalementSyncService
 
         for (QueryDocumentSnapshot doc : ref.get().get().getDocuments()) {
             Map<String, Object> data = doc.getData();
-            data.put("firebaseId", doc.getId()); // IMPORTANT pour DTO
 
-            // --- Construire le DTO pour affichage JSON ---
+            data.put("firebaseId", doc.getId());
+
             FirebaseRouteProblemeDTO dto = new FirebaseRouteProblemeDTO();
-            dto.setFirebaseId(getString(data, "firebaseId", ""));
+            dto.setFirebaseId(getString(data, "firebaseId", null));
             dto.setSurface(getBigDecimal(data, "surface"));
             dto.setBudget(getBigDecimal(data, "budget"));
-            dto.setStatus(getString(data, "status", "INCONNU"));
-            dto.setEntreprise(getString(data, "entreprise", "INCONNU"));
-            
-            dtoList.add(dto);
-        }
+            dto.setStatus(getString(data, "status", null));
+            dto.setEntreprise(getString(data, "entreprise", null));
+            dto.setDescription(getString(data, "description", null));
 
-        return dtoList; // renvoyer les DTO pour affichage JSON
-    }
+            dto.setIdStatus(getString(data, "idStatus", null));
+            dto.setIdEntreprise(getString(data, "idEntreprise", null));
 
-    public List<FirebaseRouteProblemeDTO> syncAndGetAllSignalements() throws Exception 
-    {
-        Firestore db = FirestoreClient.getFirestore();
-        CollectionReference ref = db.collection("signalements");
-
-        List<FirebaseRouteProblemeDTO> dtoList = new ArrayList<>();
-
-        for (QueryDocumentSnapshot doc : ref.get().get().getDocuments()) {
-            Map<String, Object> data = doc.getData();
-            data.put("firebaseId", doc.getId()); // IMPORTANT pour DTO
-
-            // --- 1️⃣ Construire le DTO pour affichage JSON ---
-            FirebaseRouteProblemeDTO dto = new FirebaseRouteProblemeDTO();
-            dto.setFirebaseId(getString(data, "firebaseId", ""));
-            dto.setSurface(getBigDecimal(data, "surface"));
-            dto.setBudget(getBigDecimal(data, "budget"));
-            dto.setStatus(getString(data, "status", "INCONNU"));
-            dto.setEntreprise(getString(data, "entreprise", "INCONNU"));
+            Object locObj = data.get("localisation");
+            if (locObj instanceof GeoPoint geoPoint) {
+                dto.setLatitude(BigDecimal.valueOf(geoPoint.getLatitude()));
+                dto.setLongitude(BigDecimal.valueOf(geoPoint.getLongitude()));
+            } else {
+                dto.setLatitude(null);
+                dto.setLongitude(null);
+            }
 
             dtoList.add(dto);
 
-            // --- 2️⃣ Construire l'entité JPA et sauvegarder ---
-            RouteProbleme rp = new RouteProbleme();
-            rp.setFirebaseId(dto.getFirebaseId());
+
+            RouteProbleme rp = routeProblemeRepository.findByFirebaseId(dto.getFirebaseId()).orElse(null);
+
+            if (rp == null) {
+                rp = new RouteProbleme();
+                rp.setFirebaseId(dto.getFirebaseId());
+                rp.setUpdatedAt(LocalDateTime.now());
+            }
+
             rp.setSurface(dto.getSurface());
             rp.setBudget(dto.getBudget());
             rp.setUpdatedAt(LocalDateTime.now());
+            rp.setLatitude(dto.getLatitude());
+            rp.setLongitude(dto.getLongitude());
+            rp.setProblemeDescription(dto.getDescription());
 
-            //  Si tes colonnes @ManyToOne sont NOT NULL, tu dois fournir des entités existantes
-            rp.setRouteEntreprise(null); 
-            rp.setRouteStatus(null);      
-            rp.setUser(null);            
+            rp.setRouteEntreprise(null);
+            rp.setRouteStatus(null);
+            rp.setUser(null);
 
-            // rp.setRouteEntreprise(dto.getEntrepriseEntity());
-            // rp.setRouteStatus(dto.getStatusEntity());
-            // rp.setUser(dto.getUserEntity());
-
+            if (dto.getIdEntreprise() != null) {
+                rp.setRouteEntreprise(entrepriseRepository.findById(Long.valueOf(dto.getIdEntreprise())).orElse(null));
+            }
+            if (dto.getIdStatus() != null) {
+                rp.setRouteStatus(statusRepository.findById(Integer.valueOf(dto.getIdStatus())).orElse(null));
+            }
             routeProblemeRepository.save(rp);
         }
 
-        return dtoList; // renvoyer les DTO pour affichage JSON
+        return dtoList;
     }
 
 
@@ -99,6 +107,9 @@ public class SignalementSyncService
         Object value = map.get(key);
         return value != null ? new BigDecimal(value.toString()) : BigDecimal.ZERO;
     }
+
+
+    
 
 
 }
