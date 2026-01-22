@@ -25,7 +25,7 @@ public class SignalementController {
         this.signalementSyncService = signalementSyncService;
     }
 
-    
+
     // Liste Signalements FireBase
     @GetMapping
     @Operation(summary = "Liste des signalements récupérés depuis Firebase")
@@ -33,9 +33,20 @@ public class SignalementController {
         return ApiResponse.success(signalementSyncService.syncAndGetAllSignalements());
     }
 
+
+    @GetMapping("/envoi")
+    @Operation(summary = "Envoi des signalements locals vers FireBase")
+    public ApiResponse<String> envoiFireBase () throws Exception {
+        signalementSyncService.syncLocalToFirebase();
+        return ApiResponse.success("Synchronisé avec succes");
+    }
+
     // 🔹 Détails d’un signalement
     @GetMapping("/{id}")
     public ApiResponse<RouteProbleme> getById(@PathVariable Integer id) {
         return ApiResponse.success(routeProblemeService.getById(id));
     }
+
+
+
 }

@@ -5,13 +5,14 @@ import com.carte.clouds5spring.entity.RouteProbleme;
 import com.carte.clouds5spring.repository.RouteEntrepriseRepository;
 import com.carte.clouds5spring.repository.RouteProblemeRepository;
 import com.carte.clouds5spring.repository.RouteStatusRepository;
+import com.google.cloud.Timestamp;
 import com.google.cloud.firestore.*;
 import com.google.firebase.cloud.FirestoreClient;
 import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -98,6 +99,48 @@ public class SignalementSyncService
     }
 
 
+    public void syncLocalToFirebase() throws Exception {
+        Firestore db = FirestoreClient.getFirestore();
+        CollectionReference ref = db.collection("signalements");
+
+        List<RouteProbleme> localProblemes = routeProblemeRepository.findAll();
+
+        for (RouteProbleme rp : localProblemes) {
+            Map<String, Object> data = new HashMap<>();
+
+            data.put("surface", rp.getSurface() != null ? rp.getSurface().doubleValue() : null);
+            data.put("budget", rp.getBudget() != null ? rp.getBudget().doubleValue() : null);
+            data.put("status", rp.getRouteStatus() != null ? rp.getRouteStatus().getLabel() : null);
+            data.put("entreprise", rp.getRouteEntreprise() != null ? rp.getRouteEntreprise().getLabel() : null);
+            data.put("idStatus", rp.getRouteStatus() != null ? rp.getRouteStatus().getId() : null);
+            data.put("idEntreprise", rp.getRouteEntreprise() != null ? rp.getRouteEntreprise().getId() : null);
+            data.put("updatedAt", Timestamp.now());
+
+            if (rp.getLatitude() != null && rp.getLongitude() != null) {
+                data.put("localisation", new GeoPoint(
+                    rp.getLatitude().doubleValue(),
+                    rp.getLongitude().doubleValue()
+                ));
+            }
+
+
+            if (rp.getFirebaseId() == null || rp.getFirebaseId().isEmpty()) {
+                
+                DocumentReference newDoc = ref.document();
+                rp.setFirebaseId(newDoc.getId());
+                data.put("createdAt", Timestamp.now());
+                newDoc.set(data).get();
+
+                routeProblemeRepository.save(rp);
+            } else {
+                DocumentReference docRef = ref.document(rp.getFirebaseId());
+                docRef.set(data, SetOptions.merge()).get();
+            }
+        }
+    }
+
+
+
     private String getString(Map<String,Object> map, String key, String defaultValue) {
         Object value = map.get(key);
         return value != null ? value.toString() : defaultValue;
@@ -109,7 +152,7 @@ public class SignalementSyncService
     }
 
 
-    
+
 
 
 }
