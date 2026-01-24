@@ -12,6 +12,7 @@ services:
     ports:
       - "8081:8080"
     environment:
+      SERVER_PORT: 8080
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/clouds5
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
@@ -23,8 +24,8 @@ services:
       SPRINGDOC_SWAGGER_UI_TAGS_SORTER: alpha
       SPRINGDOC_API_DOCS_GROUPS_ENABLED: true
     volumes:
-      - ./clouds5spring/src:/app/src
-      - ./clouds5spring/pom.xml:/app/pom.xml
+      - ./clouds5spring/src:/app/src  # Seulement le code source
+      - ./clouds5spring/pom.xml:/app/pom.xml  # Seulement le pom.xml
       - maven_repo:/root/.m2  # Cache Maven pour accélérer les builds
     networks:
       - app-network
