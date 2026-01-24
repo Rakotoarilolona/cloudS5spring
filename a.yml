@@ -1,0 +1,135 @@
+version: "3.8"
+
+services:
+  # ---------------------
+  # DATABASE POSTGRES UNIQUE (pour OSM et votre app)
+  # ---------------------
+  db:
+    image: postgres:16
+    container_name: clouds5_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_MULTIPLE_DATABASES: gis,clouds5
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8"
+    ports:
+      - "5434:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./sql/gis.sql:/docker-entrypoint-initdb.d/01-gis.sql
+      - ./sql/clouds5.sql:/docker-entrypoint-initdb.d/02-clouds5.sql
+    networks:
+      - app-network
+    command: >
+      postgres
+      -c work_mem=64MB
+      -c maintenance_work_mem=256MB
+      -c shared_buffers=256MB
+      -c max_connections=200
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ---------------------
+  # OSM - IMPORT (utilise la DB gis)
+  # ---------------------
+  osm-import:
+    image: overv/openstreetmap-tile-server
+    container_name: osm_import
+    volumes:
+      - ../Cloud_Vue/data/madagascar.osm.pbf:/data/region.osm.pbf
+      - osm-tiles-data:/data/tiles
+    environment:
+      PGHOST: db
+      PGPORT: 5432
+      PGUSER: postgres
+      PGPASSWORD: postgres
+      PGDATABASE: gis
+    command: import
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - app-network
+    restart: "no"
+
+  # ---------------------
+  # OSM - SERVER (utilise la DB gis)
+  # ---------------------
+  osm-server:
+    image: overv/openstreetmap-tile-server
+    container_name: osm_server
+    volumes:
+      - osm-tiles-data:/data/tiles
+    ports:
+      - "8080:80"
+    environment:
+      PGHOST: db
+      PGPORT: 5432
+      PGUSER: postgres
+      PGPASSWORD: postgres
+      PGDATABASE: gis
+    command: run
+    depends_on:
+      - osm-import
+    networks:
+      - app-network
+
+  # ---------------------
+  # BACKEND - SPRING BOOT (reste indépendant, utilise seulement clouds5)
+  # ---------------------
+  app:
+    build:
+      context: ./clouds5spring
+      dockerfile: Dockerfile
+    container_name: clouds5_spring
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8081:8080"
+    environment:
+      SERVER_PORT: 8080
+      # Utilise seulement la base clouds5 pour votre application
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/clouds5
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_PROFILES_ACTIVE: docker
+      SPRINGDOC_API_DOCS_PATH: /api-docs
+      SPRINGDOC_SWAGGER_UI_PATH: /swagger-ui.html
+      SPRINGDOC_SWAGGER_UI_ENABLED: true
+      SPRINGDOC_SWAGGER_UI_TAGS_SORTER: alpha
+      SPRINGDOC_API_DOCS_GROUPS_ENABLED: true
+      # Pas de configuration OSM ici, reste comme avant
+    volumes:
+      - ./clouds5spring/src:/app/src
+      - ./clouds5spring/pom.xml:/app/pom.xml
+      - maven_repo:/root/.m2
+    networks:
+      - app-network
+
+  # ---------------------
+  # FRONTEND - VUEJS (optionnel)
+  # ---------------------
+  # frontend:
+  #   build:
+  #     context: ./frontend
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "8082:80"
+  #   depends_on:
+  #     - app
+  #   networks:
+  #     - app-network
+
+networks:
+  app-network:
+
+volumes:
+  db_data:
+  maven_repo:
+  osm-tiles-data:
