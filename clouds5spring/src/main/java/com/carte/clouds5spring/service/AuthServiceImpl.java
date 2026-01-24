@@ -78,7 +78,6 @@ public class AuthServiceImpl implements AuthService
 
         if (!req.password.equals(user.getPassword())) 
         {
-
             user.setNbrTentative(user.getNbrTentative() + 1);
             userRepository.save(user);
 
@@ -98,6 +97,7 @@ public class AuthServiceImpl implements AuthService
         AuthResponse res = new AuthResponse();
         res.token = jwt;
         res.expiresAt = LocalDateTime.now().plusMinutes(30);
+        res.role = user.getUserRole().getLabel();
 
         return res;
 

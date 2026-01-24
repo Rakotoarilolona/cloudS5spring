@@ -7,4 +7,5 @@ public class AuthResponse {
     // public UUID token;
     public String token;
     public LocalDateTime expiresAt;
+    public String role;
 }

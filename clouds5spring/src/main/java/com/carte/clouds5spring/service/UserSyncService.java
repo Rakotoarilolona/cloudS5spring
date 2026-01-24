@@ -150,6 +150,7 @@ public class UserSyncService
 
         for (User user : users) {
                 Map<String, Object> data = new HashMap<>();
+                data.put("id_user", user.getId());
                 data.put("email", user.getEmail());
                 data.put("password", user.getPassword());
                 data.put("pseudo", user.getPseudo());
