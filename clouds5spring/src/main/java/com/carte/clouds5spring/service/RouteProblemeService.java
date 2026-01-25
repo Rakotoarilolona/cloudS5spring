@@ -7,13 +7,17 @@ import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
+import com.carte.clouds5spring.dto.AssignEntrepriseDto;
 import com.carte.clouds5spring.dto.RouteProblemeDto;
+import com.carte.clouds5spring.entity.RouteEntreprise;
 import com.carte.clouds5spring.entity.RouteProbleme;
 import com.carte.clouds5spring.entity.RouteStatus;
 import com.carte.clouds5spring.exception.ApiException;
 import com.carte.clouds5spring.repository.RouteEntrepriseRepository;
 import com.carte.clouds5spring.repository.RouteProblemeRepository;
 import com.carte.clouds5spring.repository.RouteStatusRepository;
+
+import jakarta.transaction.Transactional;
 
 
 @Service
@@ -134,6 +138,21 @@ public class RouteProblemeService
     private BigDecimal getBigDecimal(Map<String,Object> map, String key) {
         Object value = map.get(key);
         return value != null ? new BigDecimal(value.toString()) : BigDecimal.ZERO;
+    }
+
+    @Transactional
+    public void assignEntreprise(Integer id, AssignEntrepriseDto dto) {
+
+        RouteProbleme rp = routeProblemeRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Signalement introuvable"));
+
+        RouteEntreprise entreprise = entrepriseRepository.findById(dto.getEntrepriseId())
+            .orElseThrow(() -> new RuntimeException("Entreprise introuvable"));
+
+        rp.setRouteEntreprise(entreprise);
+        rp.setBudget(dto.getBudget());
+
+        routeProblemeRepository.save(rp);
     }
 
 }

@@ -87,7 +87,7 @@ public class SignalementSyncService
             rp.setUser(null);
 
             if (dto.getIdEntreprise() != null) {
-                rp.setRouteEntreprise(entrepriseRepository.findById(Long.valueOf(dto.getIdEntreprise())).orElse(null));
+                rp.setRouteEntreprise(entrepriseRepository.findById(Integer.valueOf(dto.getIdEntreprise())).orElse(null));
             }
             if (dto.getIdStatus() != null) {
                 rp.setRouteStatus(statusRepository.findById(Integer.valueOf(dto.getIdStatus())).orElse(null));

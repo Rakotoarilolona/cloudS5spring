@@ -4,9 +4,12 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.carte.clouds5spring.dto.ApiResponse;
+import com.carte.clouds5spring.dto.AssignEntrepriseDto;
 import com.carte.clouds5spring.dto.RouteProblemeDto;
 import com.carte.clouds5spring.entity.RouteProbleme;
 import com.carte.clouds5spring.service.RouteProblemeService;
@@ -45,6 +48,15 @@ public class SignalementController {
     @GetMapping("/{id}")
     public ApiResponse<RouteProbleme> getById(@PathVariable Integer id) {
         return ApiResponse.success(routeProblemeService.getById(id));
+    }
+
+    @PutMapping("/{id}/assign")
+    public ApiResponse<String> assignEntreprise(
+            @PathVariable Integer id,
+            @RequestBody AssignEntrepriseDto dto
+    ) {
+        routeProblemeService.assignEntreprise(id, dto);
+        return ApiResponse.success("Entreprise assignée avec succès");
     }
 
 
