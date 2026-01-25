@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.carte.clouds5spring.dto.ApiResponse;
-import com.carte.clouds5spring.dto.FirebaseRouteProblemeDTO;
+import com.carte.clouds5spring.dto.RouteProblemeDto;
 import com.carte.clouds5spring.entity.RouteProbleme;
 import com.carte.clouds5spring.service.RouteProblemeService;
 import com.carte.clouds5spring.service.SignalementSyncService;
@@ -29,8 +29,8 @@ public class SignalementController {
     // Liste Signalements FireBase
     @GetMapping
     @Operation(summary = "Liste des signalements récupérés depuis Firebase")
-    public ApiResponse<List<FirebaseRouteProblemeDTO>> getAll() throws Exception {
-        return ApiResponse.success(signalementSyncService.syncAndGetAllSignalements());
+    public ApiResponse<List<RouteProblemeDto>> getAll() throws Exception {
+        return ApiResponse.success(routeProblemeService.getAll());
     }
 
 

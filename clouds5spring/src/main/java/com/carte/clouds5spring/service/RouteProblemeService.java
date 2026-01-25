@@ -2,17 +2,18 @@ package com.carte.clouds5spring.service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Map;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
+import com.carte.clouds5spring.dto.RouteProblemeDto;
 import com.carte.clouds5spring.entity.RouteProbleme;
 import com.carte.clouds5spring.entity.RouteStatus;
 import com.carte.clouds5spring.exception.ApiException;
+import com.carte.clouds5spring.repository.RouteEntrepriseRepository;
 import com.carte.clouds5spring.repository.RouteProblemeRepository;
 import com.carte.clouds5spring.repository.RouteStatusRepository;
-import com.carte.clouds5spring.service.FirebaseService;
 
 
 @Service
@@ -21,21 +22,68 @@ public class RouteProblemeService
     private final RouteProblemeRepository routeProblemeRepository;
     private final RouteStatusRepository statusRepository;
     private final FirebaseService firebaseService;
+    private final RouteEntrepriseRepository entrepriseRepository;
+
 
     public RouteProblemeService(
         RouteProblemeRepository routeProblemeRepository,
         RouteStatusRepository statusRepository,
-        FirebaseService firebaseService
+        FirebaseService firebaseService,
+        RouteEntrepriseRepository entrepriseRepository
     ) {
         this.routeProblemeRepository = routeProblemeRepository;
         this.statusRepository = statusRepository;
         this.firebaseService = firebaseService;
+        this.entrepriseRepository = entrepriseRepository;
     }
 
-    public List<RouteProbleme> getAll() 
+    // public List<RouteProbleme> getAll() 
+    // {
+    //     return routeProblemeRepository.findAll();
+    // }
+
+    // recuperer la liste depuis la bdd postgres (local)
+    public List<RouteProblemeDto> getAll() throws Exception 
     {
-        return routeProblemeRepository.findAll();
+        return routeProblemeRepository.findAllDto();
     }
+
+    // public List<FirebaseRouteProblemeDTO> getAll() throws Exception {
+    //     Firestore db = FirestoreClient.getFirestore();
+    //     CollectionReference ref = db.collection("signalements");
+
+    //     List<FirebaseRouteProblemeDTO> dtoList = new ArrayList<>();
+
+    //     for (QueryDocumentSnapshot doc : ref.get().get().getDocuments()) {
+    //         Map<String, Object> data = doc.getData();
+
+    //         data.put("firebaseId", doc.getId());
+
+    //         FirebaseRouteProblemeDTO dto = new FirebaseRouteProblemeDTO();
+    //         dto.setFirebaseId(getString(data, "firebaseId", null));
+    //         dto.setSurface(getBigDecimal(data, "surface"));
+    //         dto.setBudget(getBigDecimal(data, "budget"));
+    //         dto.setStatus(getString(data, "status", null));
+    //         dto.setEntreprise(getString(data, "entreprise", null));
+    //         dto.setDescription(getString(data, "description", null));
+
+    //         dto.setIdStatus(getString(data, "idStatus", null));
+    //         dto.setIdEntreprise(getString(data, "idEntreprise", null));
+
+    //         Object locObj = data.get("localisation");
+    //         if (locObj instanceof GeoPoint geoPoint) {
+    //             dto.setLatitude(BigDecimal.valueOf(geoPoint.getLatitude()));
+    //             dto.setLongitude(BigDecimal.valueOf(geoPoint.getLongitude()));
+    //         } else {
+    //             dto.setLatitude(null);
+    //             dto.setLongitude(null);
+    //         }
+
+    //         dtoList.add(dto);
+    //     }
+
+    //     return dtoList;
+    // }
 
     public RouteProbleme getById(Integer id) 
     {
@@ -76,6 +124,16 @@ public class RouteProblemeService
         // Optionnel : MAJ Firebase
         // firebaseService.updateStatus(rp.getFirebaseId(), status.getLabel());
         
+    }
+
+    private String getString(Map<String,Object> map, String key, String defaultValue) {
+        Object value = map.get(key);
+        return value != null ? value.toString() : defaultValue;
+    }
+
+    private BigDecimal getBigDecimal(Map<String,Object> map, String key) {
+        Object value = map.get(key);
+        return value != null ? new BigDecimal(value.toString()) : BigDecimal.ZERO;
     }
 
 }

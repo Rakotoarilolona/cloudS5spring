@@ -16,6 +16,29 @@ public class RouteProblemeDto {
     private BigDecimal longitude;
     private BigDecimal latitude;
 
+    public RouteProblemeDto(
+            Integer id,
+            BigDecimal surface,
+            BigDecimal budget,
+            Integer routeEntrepriseId,
+            String routeEntrepriseName,
+            Integer routeStatusId,
+            String routeStatusName,
+            String problemeDescription,
+            BigDecimal longitude,
+            BigDecimal latitude
+    ) {
+        this.id = id;
+        this.surface = surface;
+        this.budget = budget;
+        this.routeEntrepriseId = routeEntrepriseId;
+        this.routeEntrepriseName = routeEntrepriseName;
+        this.routeStatusId = routeStatusId;
+        this.routeStatusName = routeStatusName;
+        this.problemeDescription = problemeDescription;
+        this.longitude = longitude;
+        this.latitude = latitude;
+    }
 
     public String getRouteEntrepriseName() {
         return routeEntrepriseName;
