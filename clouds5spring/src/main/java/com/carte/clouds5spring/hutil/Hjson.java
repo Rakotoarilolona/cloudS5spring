@@ -65,6 +65,24 @@ public class Hjson {
     }
     public static String formatJson(String data, String status, String message)
     {
-        return "{ \"status\": \"" + status + "\", \"data\": \"" + data + "\", \"message\": \"" + message + "\" }";
+        String safeStatus = escapeJsonString(status);
+        String safeMessage = escapeJsonString(message);
+        String safeData = (data == null || data.isBlank()) ? "null" : data;
+
+        // data is expected to already be a JSON value (object/array), so it must not be quoted.
+        return "{ \"status\": \"" + safeStatus + "\", \"data\": " + safeData + ", \"message\": \"" + safeMessage + "\" }";
+    }
+
+    private static String escapeJsonString(String value) {
+        if (value == null) {
+            return "";
+        }
+
+        return value
+            .replace("\\", "\\\\")
+            .replace("\"", "\\\"")
+            .replace("\n", "\\n")
+            .replace("\r", "\\r")
+            .replace("\t", "\\t");
     }
 }
