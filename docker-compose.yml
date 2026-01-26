@@ -23,6 +23,9 @@ services:
       SPRINGDOC_SWAGGER_UI_ENABLED: true
       SPRINGDOC_SWAGGER_UI_TAGS_SORTER: alpha
       SPRINGDOC_API_DOCS_GROUPS_ENABLED: true
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
     volumes:
       - ./clouds5spring/src:/app/src  # Seulement le code source
       - ./clouds5spring/pom.xml:/app/pom.xml  # Seulement le pom.xml
