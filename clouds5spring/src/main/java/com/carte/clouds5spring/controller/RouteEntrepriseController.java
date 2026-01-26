@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.carte.clouds5spring.entity.RouteEntreprise;
+import com.carte.clouds5spring.dto.RouteEntrepriseDto;
 import com.carte.clouds5spring.service.RouteEntrepriseService;
 
 @RestController
@@ -20,7 +20,7 @@ public class RouteEntrepriseController {
     }
 
     @GetMapping
-    public List<RouteEntreprise> getEntreprises() {
+    public List<RouteEntrepriseDto> getEntreprises() {
         return routeEntrepriseService.findAll();
     }
 }

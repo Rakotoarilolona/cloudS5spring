@@ -15,6 +15,7 @@ public class RouteProblemeDto {
     private String problemeDescription;
     private BigDecimal longitude;
     private BigDecimal latitude;
+    private RouteEntrepriseDto entreprise;
 
     public RouteProblemeDto(
             Integer id,
@@ -121,6 +122,14 @@ public class RouteProblemeDto {
 
     public void setRouteStatusId(Integer routeStatusId) {
         this.routeStatusId = routeStatusId;
+    }
+
+    public RouteEntrepriseDto getEntreprise() {
+        return entreprise;
+    }
+
+    public void setEntreprise(RouteEntrepriseDto entreprise) {
+        this.entreprise = entreprise;
     }
     public RouteProbleme toEntity() {
         if (this == null) {
