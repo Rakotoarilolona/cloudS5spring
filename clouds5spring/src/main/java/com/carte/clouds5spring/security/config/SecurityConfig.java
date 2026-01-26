@@ -74,6 +74,7 @@ public class SecurityConfig
 		CorsConfiguration config = new CorsConfiguration();
 		config.setAllowCredentials(true);
 		config.addAllowedOriginPattern("http://localhost:5173"); // ton front
+		config.addAllowedOriginPattern("http://localhost:5174"); // ton front (Docker port)
 		config.addAllowedHeader("*");
 		config.addAllowedMethod("*");
 		source.registerCorsConfiguration("/**", config);

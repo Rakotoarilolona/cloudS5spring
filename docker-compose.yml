@@ -27,6 +27,9 @@ services:
       - ./clouds5spring/src:/app/src  # Seulement le code source
       - ./clouds5spring/pom.xml:/app/pom.xml  # Seulement le pom.xml
       - maven_repo:/root/.m2  # Cache Maven pour accélérer les builds
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
     networks:
       - app-network
 
