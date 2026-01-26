@@ -49,6 +49,25 @@ services:
     networks:
       - app-network
 
+  vue-app:
+    build:
+      context: ../Cloud_Vue
+      dockerfile: Dockerfile
+    image: vue-app:dev
+    container_name: vue_dev
+    ports:
+      - "5174:5173"
+    volumes:
+      - ../Cloud_Vue:/app
+      - /app/node_modules
+    environment:
+      - VITE_BACK_BASE_URL=http://localhost:8081
+    command: ["npm", "run", "dev", "--", "--host=0.0.0.0"]
+    networks:
+      - app-network
+    depends_on:
+      - app
+
   # ---------------------
   # FRONTEND - VUEJS (à compléter plus tard)
   # ---------------------
