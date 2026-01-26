@@ -11,17 +11,34 @@ services:
       - ../Cloud_Vue/osm-server/data/madagascar.osm.pbf:/data/region.osm.pbf
       - osm-data:/data/database
     environment:
-      - SKIP_EXTERNAL_DATA=true
+      - SKIP_EXTERNAL_DATA=true  # On saute les téléchargements externes pour accélérer
     command: import
     restart: "no"
     networks:
       - app-network
-    healthcheck:
-      test: ["CMD", "test", "-f", "/data/database/import-complete"]
-      interval: 10s
-      timeout: 5s
-      retries: 60
-      start_period: 30s
+
+  # ---------------------
+  # SERVICE D'ATTENTE
+  # ---------------------
+  wait-for-import:
+    image: alpine:latest
+    container_name: wait_for_import
+    command: >
+      sh -c "
+      echo 'En attente de la fin de l''import OSM...';
+      while [ ! -f /data/database/planet-import-complete ]; do
+        sleep 10;
+        echo 'Import OSM encore en cours...';
+      done;
+      echo 'Import OSM terminé!';
+      "
+    volumes:
+      - osm-data:/data/database
+    depends_on:
+      - osm-import
+    networks:
+      - app-network
+    restart: "no"
 
   # ---------------------
   # OSM TILE SERVER
@@ -35,11 +52,17 @@ services:
       - "8080:80"
     command: run
     depends_on:
-      osm-import:
-        condition: service_healthy
+      wait-for-import:
+        condition: service_completed_successfully
     restart: unless-stopped
     networks:
       - app-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
 
   # ---------------------
   # DATABASE - POSTGRES
@@ -59,6 +82,15 @@ services:
       - ./clouds5spring/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - app-network
+    depends_on:
+      wait-for-import:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   # ---------------------
   # BACKEND - SPRING BOOT
@@ -87,9 +119,7 @@ services:
       SPRINGDOC_SWAGGER_UI_ENABLED: true
       SPRINGDOC_SWAGGER_UI_TAGS_SORTER: alpha
       SPRINGDOC_API_DOCS_GROUPS_ENABLED: true
-      # Variable pour OSM dans Spring
       OSM_TILE_SERVER_URL: http://osm-server:80
-      # Activer Actuator pour le healthcheck
       MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: health,info
     dns:
       - 8.8.8.8
