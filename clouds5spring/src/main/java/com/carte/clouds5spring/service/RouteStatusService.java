@@ -1,19 +1,23 @@
 package com.carte.clouds5spring.service;
 
-import com.carte.clouds5spring.entity.*;
-import com.carte.clouds5spring.repository.*;
-import com.google.cloud.firestore.CollectionReference;
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.stereotype.Service;
+
+import com.carte.clouds5spring.dto.RouteStatusDto;
+import com.carte.clouds5spring.entity.HistoriqueStatusRoute;
+import com.carte.clouds5spring.entity.RouteProbleme;
+import com.carte.clouds5spring.entity.RouteStatus;
+import com.carte.clouds5spring.repository.HistoriqueStatusRouteRepository;
+import com.carte.clouds5spring.repository.RouteProblemeRepository;
+import com.carte.clouds5spring.repository.RouteStatusRepository;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.FieldValue;
 import com.google.cloud.firestore.Firestore;
 import com.google.firebase.cloud.FirestoreClient;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
 
 @Service
 public class RouteStatusService 
@@ -30,6 +34,20 @@ public class RouteStatusService
         this.routeProblemeRepo = routeProblemeRepo;
         this.routeStatusRepo = routeStatusRepo;
         this.historiqueRepo = historiqueRepo;
+    }
+
+    public List<RouteStatusDto> getAll() 
+    {
+        return routeStatusRepo.findAll()
+                .stream()
+                .map(entity -> {
+                    RouteStatusDto dto = new RouteStatusDto();
+                    dto.setId(entity.getId());
+                    dto.setLabel(entity.getLabel());
+                    dto.setValeur(entity.getValeur());
+                    return dto;
+                })
+                .toList();
     }
 
     public void changeStatus(Integer routeProblemeId, Integer routeStatusId) 
