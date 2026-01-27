@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.carte.clouds5spring.dto.UserUpdateRequest;
 import com.carte.clouds5spring.entity.User;
+import com.carte.clouds5spring.dto.UserDto;
 import com.carte.clouds5spring.entity.UserRole;
 import com.carte.clouds5spring.exception.ApiException;
 import com.carte.clouds5spring.repository.UserRepository;
@@ -67,6 +68,10 @@ public class UserServiceImpl implements UserService {
             user.setEmail(req.getEmail());
         }
 
+        if (req.getPseudo() != null) {
+            user.setPseudo(req.getPseudo());
+        }
+
         if (req.getPassword() != null) {
             user.setPassword(req.getPassword());
         }
@@ -80,6 +85,13 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
+    @Override
+    public List<UserDto> getAllUsers() {
+        List<User> users = userRepository.findAll();
+        return users.stream()
+                .map(User::toDto)
+                .toList();
+    }
 
 
 }

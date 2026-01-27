@@ -5,6 +5,7 @@ public class UserUpdateRequest {
     private String email;
     private String password; // optionnel
     private Integer roleId;  // ADMIN uniquement
+    private String pseudo;
 
     // getters & setters
     public String getEmail() {
@@ -24,5 +25,11 @@ public class UserUpdateRequest {
     }
     public void setRoleId(Integer roleId) {
         this.roleId = roleId;
+    }
+    public String getPseudo() {
+        return pseudo;
+    }
+    public void setPseudo(String pseudo) {
+        this.pseudo = pseudo;
     }
 }

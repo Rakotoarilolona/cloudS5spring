@@ -18,6 +18,7 @@ import com.carte.clouds5spring.dto.UserUpdateRequest;
 import com.carte.clouds5spring.entity.User;
 import com.carte.clouds5spring.service.AuthService;
 import com.carte.clouds5spring.service.UserService;
+import com.carte.clouds5spring.dto.UserDto;
 
 @RestController
 @RequestMapping("/admin/users")
@@ -29,6 +30,16 @@ public class UserAdminController
     public UserAdminController(UserService userService, AuthService authService) {
         this.userService = userService;
         this.authService = authService;
+    }
+
+    @GetMapping
+    public ResponseEntity<ApiResponse<List<UserDto>>> getAllUsers() {
+
+        List<UserDto> users = userService.getAllUsers();
+
+        return ResponseEntity.ok(
+            ApiResponse.success(users)
+        );
     }
 
     @PostMapping("/{id}/unblock")
