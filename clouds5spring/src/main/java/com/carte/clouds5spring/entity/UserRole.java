@@ -7,7 +7,7 @@ import com.carte.clouds5spring.dto.UserRoleDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-@Table(name = "userrole")
+@Table(name = "userRole")
 public class UserRole {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,7 +16,7 @@ public class UserRole {
     @Column(name = "label", length = 50)
     private String label;
 
-    @OneToMany(mappedBy = "userrole", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "userRole", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<User> users;
 

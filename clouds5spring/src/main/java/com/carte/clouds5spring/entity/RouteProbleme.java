@@ -16,7 +16,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "routeprobleme")
+@Table(name = "routeProbleme")
 public class RouteProbleme {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,11 +29,11 @@ public class RouteProbleme {
     private BigDecimal budget;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_routeentreprise")
+    @JoinColumn(name = "id_routeEntreprise")
     private RouteEntreprise routeEntreprise;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_routestatus")
+    @JoinColumn(name = "id_routeStatus")
     private RouteStatus routeStatus;
 
     private String firebaseId;

@@ -14,7 +14,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "routeentreprise")
+@Table(name = "routeEntreprise")
 public class RouteEntreprise {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,7 +23,7 @@ public class RouteEntreprise {
     @Column(name = "label", length = 50)
     private String label;
 
-    @OneToMany(mappedBy = "routeentreprise", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "routeEntreprise", fetch = FetchType.LAZY)
     private List<RouteProbleme> routeProblemes;
 
     public RouteEntreprise() {}

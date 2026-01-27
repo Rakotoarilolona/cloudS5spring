@@ -6,13 +6,13 @@ import java.time.LocalDateTime;
 import com.carte.clouds5spring.dto.UserTentativeHistoriqueDto;
 
 @Entity
-@Table(name = "usertentativehistorique")
+@Table(name = "userTentativeHistorique")
 public class UserTentativeHistorique {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "datehistorique")
+    @Column(name = "dateHistorique")
     private LocalDateTime dateHistorique;
 
     @ManyToOne(fetch = FetchType.LAZY)

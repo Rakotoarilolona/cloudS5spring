@@ -30,7 +30,7 @@ public class User {
     @Column(name = "password", length = 100)
     private String password;
 
-    @Column(name = "nbrtentative")
+    @Column(name = "nbrTentative")
     private Integer nbrTentative;
 
     // @ManyToOne(fetch = FetchType.LAZY)
@@ -38,7 +38,7 @@ public class User {
     // private UserRole userRole;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_userrole")
+    @JoinColumn(name = "id_userRole")
     private UserRole userRole;
 
 
