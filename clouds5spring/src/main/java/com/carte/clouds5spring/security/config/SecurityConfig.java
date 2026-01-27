@@ -53,8 +53,7 @@ public class SecurityConfig
 					"/auth/login",
 					"/signalements",
 					"/admin/firebase-signalements",
-					"/signalements/{id}",
-					"/admin/**"
+					"/signalements/{id}"
 				).permitAll()
 				.anyRequest().authenticated())
 			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
