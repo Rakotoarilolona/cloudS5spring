@@ -23,7 +23,7 @@ public class UserSyncController
     @PostMapping("/firebase-users")
     @Operation(summary = "Recuperation des users depuis Firebase , update ou insert postgres")
     public ApiResponse<Object> syncUsers() throws Exception  {
-        return ApiResponse.success(userSyncService.syncAndGetAllUsers());
+        return ApiResponse.success(userSyncService.syncUsersFromFirebase());
     }
 
     @GetMapping("/users")
