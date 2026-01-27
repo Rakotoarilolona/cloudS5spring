@@ -1,16 +1,17 @@
-CREATE TABLE userRole(
+
+CREATE TABLE userrole(
    id SERIAL,
    label VARCHAR(50) ,
    PRIMARY KEY(id)
 );
 
-CREATE TABLE routeEntreprise(
+CREATE TABLE routeentreprise(
    id SERIAL,
    label VARCHAR(50) ,
    PRIMARY KEY(id)
 );
 
-CREATE TABLE routeStatus(
+CREATE TABLE routestatus(
    id SERIAL,
    label VARCHAR(50) ,
    valeur INTEGER,
@@ -21,73 +22,73 @@ CREATE TABLE user_(
    id SERIAL,
    email VARCHAR(100) ,
    password VARCHAR(100) ,
-   nbrTentative INTEGER,
-   id_userRole INTEGER,
+   nbrtentative INTEGER,
+   id_userrole INTEGER,
    PRIMARY KEY(id),
-   FOREIGN KEY(id_userRole) REFERENCES userRole(id)
+   FOREIGN KEY(id_userrole) REFERENCES userrole(id)
 );
 
-CREATE TABLE userTentativeHistorique(
+CREATE TABLE usertentativehistorique(
    id SERIAL,
-   dateHistorique TIMESTAMP,
+   datehistorique TIMESTAMP,
    id_user INTEGER,
    PRIMARY KEY(id),
    FOREIGN KEY(id_user) REFERENCES user_(id)
 );
 
-CREATE TABLE routeProbleme(
+CREATE TABLE routeprobleme(
    id SERIAL ,
    surface NUMERIC(15,2)  ,
    budget NUMERIC(15,2)  ,
-   id_routeEntreprise INTEGER,
+   id_routeentreprise INTEGER,
    longitude NUMERIC(15,6) ,
-   problemeDescription VARCHAR(255) ,
+   problemedescription VARCHAR(255) ,
    latitude NUMERIC(15,6) ,
-   id_routeStatus INTEGER,
+   id_routestatus INTEGER,
    id_user INTEGER,
    PRIMARY KEY(id),
-   FOREIGN KEY(id_routeEntreprise) REFERENCES routeEntreprise(id),
-   FOREIGN KEY(id_routeStatus) REFERENCES routeStatus(id),
+   FOREIGN KEY(id_routeentreprise) REFERENCES routeentreprise(id),
+   FOREIGN KEY(id_routestatus) REFERENCES routestatus(id),
    FOREIGN KEY(id_user) REFERENCES user_(id)
 );
 
-CREATE TABLE historiqueStatusRoute(
+CREATE TABLE historiquestatusroute(
    id SERIAL,
-   dateHistorique TIMESTAMP,
-   id_routeProbleme INTEGER,
-   id_routeStatus INTEGER,
+   datehistorique TIMESTAMP,
+   id_routeprobleme INTEGER,
+   id_routestatus INTEGER,
    PRIMARY KEY(id),
-   FOREIGN KEY(id_routeProbleme) REFERENCES routeProbleme(id),
-   FOREIGN KEY(id_routeStatus) REFERENCES routeStatus(id)
+   FOREIGN KEY(id_routeprobleme) REFERENCES routeprobleme(id),
+   FOREIGN KEY(id_routestatus) REFERENCES routestatus(id)
 );
 
-INSERT INTO userRole(label) VALUES ('manager');
-INSERT INTO userRole(label) VALUES ('utilisateur');
-INSERT INTO userRole(label) VALUES ('admin');
+INSERT INTO userrole(label) VALUES ('manager');
+INSERT INTO userrole(label) VALUES ('utilisateur');
+INSERT INTO userrole(label) VALUES ('admin');
 
-INSERT INTO routeStatus(label, valeur) VALUES ('signale', 1);
-INSERT INTO routeStatus(label, valeur) VALUES ('nouveau', 2);
-INSERT INTO routeStatus(label, valeur) VALUES ('en cours', 3);
-INSERT INTO routeStatus(label, valeur) VALUES ('termine', 4);
+INSERT INTO routestatus(label, valeur) VALUES ('signale', 1);
+INSERT INTO routestatus(label, valeur) VALUES ('nouveau', 2);
+INSERT INTO routestatus(label, valeur) VALUES ('en cours', 3);
+INSERT INTO routestatus(label, valeur) VALUES ('termine', 4);
 
-INSERT INTO routeEntreprise(label) VALUES ('Entreprise A');
-INSERT INTO routeEntreprise(label) VALUES ('Entreprise B');
-INSERT INTO routeEntreprise(label) VALUES ('Entreprise C');
+INSERT INTO routeentreprise(label) VALUES ('Entreprise A');
+INSERT INTO routeentreprise(label) VALUES ('Entreprise B');
+INSERT INTO routeentreprise(label) VALUES ('Entreprise C');
 
 
-INSERT INTO user_(email, password, nbrTentative, id_userRole) VALUES
+INSERT INTO user_(email, password, nbrtentative, id_userrole) VALUES
 ('manager@gmail.com', 'manager', 0, 1);
 
-INSERT INTO user_(email, password, nbrTentative, id_userRole) VALUES
+INSERT INTO user_(email, password, nbrtentative, id_userrole) VALUES
 ('jean@gmail.com', 'jean123', 0, 2);
 
-INSERT INTO user_(email, password, nbrTentative, id_userRole) VALUES
+INSERT INTO user_(email, password, nbrtentative, id_userrole) VALUES
 ('kaiamba@gmail.com', 'kaiamba123', 0, 2);
 
-INSERT INTO user_(email, password, nbrTentative, id_userRole) VALUES
+INSERT INTO user_(email, password, nbrtentative, id_userrole) VALUES
 ('test1@gmail.com', 'test123', 0, 2);
 
-INSERT INTO user_(email, password, nbrTentative, id_userRole) VALUES
+INSERT INTO user_(email, password, nbrtentative, id_userrole) VALUES
 ('test2@gmail.com', 'test123', 0, 2);
 
 UPDATE user_

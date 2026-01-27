@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "historiqueStatusRoute")
+@Table(name = "historiquestatusroute")
 public class HistoriqueStatusRoute 
 {
 
@@ -12,15 +12,15 @@ public class HistoriqueStatusRoute
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "dateHistorique", nullable = false)
+    @Column(name = "datehistorique", nullable = false)
     private LocalDateTime dateHistorique;
 
     @ManyToOne
-    @JoinColumn(name = "id_routeProbleme", nullable = false)
+    @JoinColumn(name = "id_routeprobleme", nullable = false)
     private RouteProbleme routeProbleme;
 
     @ManyToOne
-    @JoinColumn(name = "id_routeStatus", nullable = false)
+    @JoinColumn(name = "id_routestatus", nullable = false)
     private RouteStatus routeStatus;
 
     public HistoriqueStatusRoute() {

@@ -14,7 +14,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "routeEntreprise")
+@Table(name = "routeentreprise")
 public class RouteEntreprise {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

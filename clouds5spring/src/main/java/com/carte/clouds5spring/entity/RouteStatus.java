@@ -6,7 +6,7 @@ import java.util.List;
 import com.carte.clouds5spring.dto.RouteStatusDto;
 
 @Entity
-@Table(name = "routeStatus")
+@Table(name = "routestatus")
 public class RouteStatus {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
