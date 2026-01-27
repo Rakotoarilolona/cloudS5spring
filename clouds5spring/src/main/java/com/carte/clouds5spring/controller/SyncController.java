@@ -36,9 +36,10 @@ public class SyncController
     })
     public String getAllFromFirebase() throws Exception 
     {
-        userSyncService.syncAndGetAllUsers();
+        //userSyncService.syncAndGetAllUsers();
         userSyncService.syncUsersToFirebase();
         signalementSyncService.syncAndGetAllSignalements();
+        signalementSyncService.syncLocalToFirebase();
         return "Synchronisation terminée";
     }
 }
