@@ -1,3 +1,10 @@
+DROP TABLE IF EXISTS historiquestatusroute;
+DROP TABLE IF EXISTS routeprobleme;
+DROP TABLE IF EXISTS usertentativehistorique;
+DROP TABLE IF EXISTS user_;
+DROP TABLE IF EXISTS routestatus;
+DROP TABLE IF EXISTS routeentreprise;
+DROP TABLE IF EXISTS userrole;
 
 CREATE TABLE userrole(
    id SERIAL,
