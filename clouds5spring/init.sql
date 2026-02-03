@@ -1,4 +1,12 @@
 -- Truncate avec réinitialisation des séquences auto-incrément
+DROP TABLE IF EXISTS historiquestatusroute CASCADE;
+DROP TABLE IF EXISTS routeprobleme CASCADE;
+DROP TABLE IF EXISTS usertentativehistorique CASCADE;
+DROP TABLE IF EXISTS user_ CASCADE;
+DROP TABLE IF EXISTS routestatus CASCADE;
+DROP TABLE IF EXISTS routeentreprise CASCADE;
+DROP TABLE IF EXISTS userrole CASCADE;
+
 
 CREATE TABLE IF NOT EXISTS userrole(
    id SERIAL,
@@ -64,13 +72,7 @@ CREATE TABLE IF NOT EXISTS historiquestatusroute(
 );
 
 -- Tronquer dans l'ordre inverse des dépendances
-TRUNCATE TABLE historiquestatusroute RESTART IDENTITY;
-TRUNCATE TABLE routeprobleme RESTART IDENTITY;
-TRUNCATE TABLE usertentativehistorique RESTART IDENTITY;
-TRUNCATE TABLE user_ RESTART IDENTITY;
-TRUNCATE TABLE routestatus RESTART IDENTITY;
-TRUNCATE TABLE routeentreprise RESTART IDENTITY;
-TRUNCATE TABLE userrole RESTART IDENTITY;
+
 
 
 INSERT INTO userrole(label) VALUES ('manager');
