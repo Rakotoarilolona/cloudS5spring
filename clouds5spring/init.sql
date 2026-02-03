@@ -1,32 +1,25 @@
 -- Truncate avec réinitialisation des séquences auto-incrément
-TRUNCATE TABLE historiquestatusroute RESTART IDENTITY;
-TRUNCATE TABLE routeprobleme RESTART IDENTITY;
-TRUNCATE TABLE usertentativehistorique RESTART IDENTITY;
-TRUNCATE TABLE user_ RESTART IDENTITY;
-TRUNCATE TABLE routestatus RESTART IDENTITY;
-TRUNCATE TABLE routeentreprise RESTART IDENTITY;
-TRUNCATE TABLE userrole RESTART IDENTITY;
 
-CREATE TABLE userrole(
+CREATE TABLE IF NOT EXISTS userrole(
    id SERIAL,
    label VARCHAR(50) ,
    PRIMARY KEY(id)
 );
 
-CREATE TABLE routeentreprise(
+CREATE TABLE IF NOT EXISTS routeentreprise(
    id SERIAL,
    label VARCHAR(50) ,
    PRIMARY KEY(id)
 );
 
-CREATE TABLE routestatus(
+CREATE TABLE IF NOT EXISTS routestatus(
    id SERIAL,
    label VARCHAR(50) ,
    valeur INTEGER,
    PRIMARY KEY(id)
 );
 
-CREATE TABLE user_(
+CREATE TABLE IF NOT EXISTS user_(
    id SERIAL,
    email VARCHAR(100) ,
    password VARCHAR(100) ,
@@ -36,7 +29,7 @@ CREATE TABLE user_(
    FOREIGN KEY(id_userrole) REFERENCES userrole(id)
 );
 
-CREATE TABLE usertentativehistorique(
+CREATE TABLE IF NOT EXISTS usertentativehistorique(
    id SERIAL,
    datehistorique TIMESTAMP,
    id_user INTEGER,
@@ -44,7 +37,7 @@ CREATE TABLE usertentativehistorique(
    FOREIGN KEY(id_user) REFERENCES user_(id)
 );
 
-CREATE TABLE routeprobleme(
+CREATE TABLE IF NOT EXISTS routeprobleme(
    id SERIAL ,
    surface NUMERIC(15,2)  ,
    budget NUMERIC(15,2)  ,
@@ -60,7 +53,7 @@ CREATE TABLE routeprobleme(
    FOREIGN KEY(id_user) REFERENCES user_(id)
 );
 
-CREATE TABLE historiquestatusroute(
+CREATE TABLE IF NOT EXISTS historiquestatusroute(
    id SERIAL,
    datehistorique TIMESTAMP,
    id_routeprobleme INTEGER,
@@ -69,6 +62,15 @@ CREATE TABLE historiquestatusroute(
    FOREIGN KEY(id_routeprobleme) REFERENCES routeprobleme(id),
    FOREIGN KEY(id_routestatus) REFERENCES routestatus(id)
 );
+
+TRUNCATE TABLE historiquestatusroute RESTART IDENTITY;
+TRUNCATE TABLE routeprobleme RESTART IDENTITY;
+TRUNCATE TABLE usertentativehistorique RESTART IDENTITY;
+TRUNCATE TABLE user_ RESTART IDENTITY;
+TRUNCATE TABLE routestatus RESTART IDENTITY;
+TRUNCATE TABLE routeentreprise RESTART IDENTITY;
+TRUNCATE TABLE userrole RESTART IDENTITY;
+
 
 INSERT INTO userrole(label) VALUES ('manager');
 INSERT INTO userrole(label) VALUES ('utilisateur');
