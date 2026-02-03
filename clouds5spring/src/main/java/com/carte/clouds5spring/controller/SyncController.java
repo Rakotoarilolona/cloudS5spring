@@ -39,7 +39,7 @@ public class SyncController
         userSyncService.syncUsersToFirebase();
         userSyncService.syncUsersFromFirebase();
         signalementSyncService.syncLocalToFirebase();
-        signalementSyncService.syncAndGetAllSignalements();
+        signalementSyncService.syncFirebaseToLocal();
         return "Synchronisation terminée";
     }
 }

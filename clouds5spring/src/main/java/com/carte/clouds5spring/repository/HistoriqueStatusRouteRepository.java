@@ -10,4 +10,6 @@ public interface HistoriqueStatusRouteRepository
 
         List<HistoriqueStatusRoute> 
         findByRouteProblemeIdOrderByDateHistoriqueDesc(Integer routeProblemeId);
+
+        List<HistoriqueStatusRoute> findByRouteStatus_Id(Integer routeStatusId);
 }
