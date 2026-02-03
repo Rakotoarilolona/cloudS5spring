@@ -78,28 +78,29 @@ public class UserSyncService
 
             if (existingOpt.isPresent()) {
                 user = existingOpt.get();
+                user.setFirebaseUid(firebaseUid);
+                user.setNbrTentative(nbrTentative);
+                userRepository.save(user);
+                return "Utilisateur mis à jour : " + user.getEmail();
             } else {
                 user = new User();
                 // user.setId(idUser);
+                user.setEmail(email);
+                user.setPassword(password);
+                user.setPseudo(pseudo);
+                user.setFirebaseUid(firebaseUid);
+                user.setNbrTentative(nbrTentative);
+                if (roleLabel != null) {
+                    UserRole role = roleRepository.findByLabel(roleLabel).orElse(null);
+                    user.setUserRole(role);
+                } else {
+                    user.setUserRole(null);
+                }
+                userRepository.save(user);
             }
-
-            user.setEmail(email);
-            user.setPassword(password);
-            user.setPseudo(pseudo);
-            user.setFirebaseUid(firebaseUid);
-            user.setNbrTentative(nbrTentative);
-
-            if (roleLabel != null) {
-                UserRole role = roleRepository.findByLabel(roleLabel).orElse(null);
-                user.setUserRole(role);
-            } else {
-                user.setUserRole(null);
-            }
-
-            userRepository.save(user);
         }
 
-        return "Synchronisation Firebase → base locale terminée avec succès.";
+            return "Synchronisation des utilisateurs terminée.";
     } catch (Exception e) {
         e.printStackTrace();
         throw new RuntimeException("Erreur lors de la synchronisation depuis Firebase : " + e.getMessage());

@@ -23,7 +23,7 @@ public class SignalementSyncController
             throws Exception {
 
         return ApiResponse.success(
-            signalementSyncService.syncAndGetAllSignalements()
+            signalementSyncService.syncFirebaseToLocal()
         );
     }
 }
