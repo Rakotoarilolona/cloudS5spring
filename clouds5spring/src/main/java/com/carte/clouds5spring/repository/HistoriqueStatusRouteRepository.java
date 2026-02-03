@@ -6,5 +6,5 @@ import java.util.List;
 public interface HistoriqueStatusRouteRepository 
         extends JpaRepository<HistoriqueStatusRoute, Integer> {
 
-    List<HistoriqueStatusRoute> findByStatusId(int statusId);
+    List<HistoriqueStatusRoute> findByRouteStatus_Id(Integer routeStatusId);
 }

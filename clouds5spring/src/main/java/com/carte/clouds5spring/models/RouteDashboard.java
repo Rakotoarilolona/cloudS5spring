@@ -8,12 +8,13 @@ import com.carte.clouds5spring.entity.*;
 
 public class RouteDashboard {
     private List<StatHistorique> statistiques;
-    private double tauxReussite;
-    private double delaisMoyenGlobal;
+    private Double delaisMoyenGlobal;
 
-    public RouteDashboard(List<StatHistorique> statistiques, double tauxReussite, double delaisMoyenGlobal) {
+    public RouteDashboard() {
+
+    }
+    public RouteDashboard(List<StatHistorique> statistiques, Double delaisMoyenGlobal) {
         this.statistiques = statistiques;
-        this.tauxReussite = tauxReussite;
         this.delaisMoyenGlobal = delaisMoyenGlobal;
     }
     public List<StatHistorique> getStatistiques() {
@@ -22,16 +23,10 @@ public class RouteDashboard {
     public void setStatistiques(List<StatHistorique> statistiques) {
         this.statistiques = statistiques;
     }
-    public double getTauxReussite() {
-        return tauxReussite;
-    }
-    public void setTauxReussite(double tauxReussite) {
-        this.tauxReussite = tauxReussite;
-    }
-    public double getDelaisMoyenGlobal() {
+    public Double getDelaisMoyenGlobal() {
         return delaisMoyenGlobal;
     }
-    public void setDelaisMoyenGlobal(double delaisMoyenGlobal) {
+    public void setDelaisMoyenGlobal(Double delaisMoyenGlobal) {
         this.delaisMoyenGlobal = delaisMoyenGlobal;
     }
     

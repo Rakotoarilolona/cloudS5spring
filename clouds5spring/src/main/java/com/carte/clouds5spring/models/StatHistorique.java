@@ -9,11 +9,11 @@ import com.carte.clouds5spring.entity.*;
 public class StatHistorique {
     private RouteStatusDto status;
     private List<HistoriqueStatusRoute> problemeList;
-    private double delaisMoyen;
+    private Double delaisMoyen;
 
     public StatHistorique() {
     }
-    public StatHistorique(RouteStatusDto status, List<HistoriqueStatusRoute> problemeList, double delaisMoyen) {
+    public StatHistorique(RouteStatusDto status, List<HistoriqueStatusRoute> problemeList, Double delaisMoyen) {
         this.status = status;
         this.problemeList = problemeList;
         this.delaisMoyen = delaisMoyen;
@@ -35,11 +35,11 @@ public class StatHistorique {
         this.problemeList = problemeList;
     }
 
-    public double getDelaisMoyen() {
+    public Double getDelaisMoyen() {
         return delaisMoyen;
     }
 
-    public void setDelaisMoyen(double delaisMoyen) {
+    public void setDelaisMoyen(Double delaisMoyen) {
         this.delaisMoyen = delaisMoyen;
     }
 

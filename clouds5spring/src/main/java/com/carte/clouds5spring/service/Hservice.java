@@ -11,6 +11,7 @@ import com.carte.clouds5spring.hutil.Hjson;
 
 import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
+import org.springframework.util.RouteMatcher.Route;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -65,11 +66,11 @@ public class Hservice {
         }
         RouteStatusDto statusDto = status.get().toDto();
         stat.setStatus(statusDto);
-        List<HistoriqueStatusRoute> problemeList = historiqueStatusRouteRepository.findByStatusId(id_status);
+        List<HistoriqueStatusRoute> problemeList = historiqueStatusRouteRepository.findByRouteStatus_Id(id_status);
         stat.setProblemeList(problemeList);
         if(id_status_suivant!=null)
         {
-            List<HistoriqueStatusRoute> problemeListNext = historiqueStatusRouteRepository.findByStatusId(id_status_suivant);
+            List<HistoriqueStatusRoute> problemeListNext = historiqueStatusRouteRepository.findByRouteStatus_Id(id_status_suivant);
             List <Double> delaisList = new ArrayList<>();
             
             for(HistoriqueStatusRoute hsr : problemeList)
@@ -103,9 +104,44 @@ public class Hservice {
         
         return stat;
     }
-    public String getProblemeDashboard() {
+    public RouteDashboard getStRouteDashboard()
+    {
+        RouteDashboard dashboard = new RouteDashboard();
+        List<RouteStatus> statusList = routeStatusRepository.findAll();
+        List<StatHistorique> statList = new ArrayList<>();
+        Double totalDelais = 0.0;
+        for(int i=0;i<statusList.size();i++)
+        {
+            RouteStatus status = statusList.get(i);
+            Integer id_status_suivant = null;
+            if(i<statusList.size()-1)
+            {
+                id_status_suivant = statusList.get(i+1).getId();
+            }
+            StatHistorique stat = getStatHistoriqueByStatus(status.getId(),id_status_suivant);
+            statList.add(stat);
 
-        return Hjson.formatJson(null, "success", "Data fetched successfully");
+        }
+        dashboard.setStatistiques(statList);
+        for(StatHistorique sh : statList)
+        {
+            if(sh.getDelaisMoyen() != null)
+            {
+                totalDelais += sh.getDelaisMoyen();
+            }
+        }
+        Double delaisMoyenGlobal = 0.0;
+        if(statList.size() > 0)
+        {
+            delaisMoyenGlobal = totalDelais / statList.size();
+        }
+        dashboard.setDelaisMoyenGlobal(delaisMoyenGlobal);
+        return dashboard;
+    }
+    public String getProblemeDashboard() {
+        RouteDashboard dashboard = getStRouteDashboard();
+        String data = Hjson.toJson(dashboard);
+        return Hjson.formatJson(data, "success", "Data fetched successfully");
 
     }
 }
