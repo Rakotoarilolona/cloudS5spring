@@ -63,6 +63,7 @@ CREATE TABLE IF NOT EXISTS historiquestatusroute(
    FOREIGN KEY(id_routestatus) REFERENCES routestatus(id)
 );
 
+-- Tronquer dans l'ordre inverse des dépendances
 TRUNCATE TABLE historiquestatusroute RESTART IDENTITY;
 TRUNCATE TABLE routeprobleme RESTART IDENTITY;
 TRUNCATE TABLE usertentativehistorique RESTART IDENTITY;
