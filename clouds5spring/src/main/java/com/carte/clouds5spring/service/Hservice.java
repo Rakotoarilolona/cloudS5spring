@@ -1,34 +1,36 @@
 package com.carte.clouds5spring.service;
 
-import com.carte.clouds5spring.dto.RouteProblemeDto;
-import com.carte.clouds5spring.entity.RouteEntreprise;
-import com.carte.clouds5spring.entity.RouteProbleme;
+import com.carte.clouds5spring.dto.*;
+import com.carte.clouds5spring.entity.*;
+import com.carte.clouds5spring.repository.*;
+import com.carte.clouds5spring.models.*;
 import com.carte.clouds5spring.exception.NotFoundException;
 
-import com.carte.clouds5spring.entity.RouteStatus;
-import com.carte.clouds5spring.dto.RouteStatusDto;
-
-import com.carte.clouds5spring.dto.RouteEntrepriseDto;
 
 import com.carte.clouds5spring.hutil.Hjson;
-import com.carte.clouds5spring.repository.RouteProblemeRepository;
-import com.carte.clouds5spring.repository.RouteStatusRepository;
-import com.carte.clouds5spring.models.RouteDashboard;
-import org.springframework.stereotype.Service;
 
+import org.springframework.cglib.core.Local;
+import org.springframework.stereotype.Service;
+import org.springframework.util.RouteMatcher.Route;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.time.LocalDateTime;
 @Service
 public class Hservice {
 
     private final RouteProblemeRepository routeProblemeRepository;
     private final RouteStatusRepository routeStatusRepository;
+    private final HistoriqueStatusRouteRepository historiqueStatusRouteRepository;
+
     public Hservice(RouteProblemeRepository routeProblemeRepository, 
-        RouteStatusRepository routeStatusRepository) 
+        RouteStatusRepository routeStatusRepository, HistoriqueStatusRouteRepository historiqueStatusRouteRepository) 
     {
         this.routeProblemeRepository = routeProblemeRepository;
         this.routeStatusRepository = routeStatusRepository;
+        this.historiqueStatusRouteRepository = historiqueStatusRouteRepository;
     }
 
     public String getProblemeRoutier() {
@@ -55,35 +57,91 @@ public class Hservice {
         String data = Hjson.toJson(dto);
         return Hjson.formatJson(data, "success", "Data fetched successfully");
     }
-
-    public String getProblemeDashboard() {
-        List<RouteProbleme> problemeList = routeProblemeRepository.findAll();
-        if (problemeList.isEmpty()) {
-            throw new NotFoundException("No data found");
+    public StatHistorique getStatHistoriqueByStatus(Integer id_status,Integer id_status_suivant)
+    {
+        StatHistorique stat =new StatHistorique();
+        Optional<RouteStatus> status = routeStatusRepository.findById(id_status);
+        if (status.isEmpty()) {
+            throw new NotFoundException("Data not found for id_status: " + id_status);
         }
-        List<RouteEntreprise> entrepriseListEntity = new ArrayList<>();
-        for(RouteProbleme probleme : problemeList) {
-            RouteEntreprise entreprise = probleme.getRouteEntreprise();
-            if (entreprise != null && !entrepriseListEntity.contains(entreprise)) {
-                entrepriseListEntity.add(entreprise);
+        RouteStatusDto statusDto = status.get().toDto();
+        stat.setStatus(statusDto);
+        List<HistoriqueStatusRoute> problemeList = historiqueStatusRouteRepository.findByRouteStatus_Id(id_status);
+        stat.setProblemeList(problemeList);
+        if(id_status_suivant!=null)
+        {
+            List<HistoriqueStatusRoute> problemeListNext = historiqueStatusRouteRepository.findByRouteStatus_Id(id_status_suivant);
+            List <Double> delaisList = new ArrayList<>();
+            
+            for(HistoriqueStatusRoute hsr : problemeList)
+            {
+                for(HistoriqueStatusRoute hsrNext : problemeListNext)
+                {
+                    RouteProbleme rp = hsr.getRouteProbleme();
+                    RouteProbleme rpNext = hsrNext.getRouteProbleme();
+                    if(rp.getId() == rpNext.getId())
+                    {
+                        LocalDateTime timestamp = hsr.getDateHistorique();
+                        LocalDateTime timestampNext = hsrNext.getDateHistorique();
+                        double delais = java.time.Duration.between(timestamp, timestampNext).toMinutes();
+                        delaisList.add(delais);
+                        break;
+                    }
+                }
+            }
+            double sommeDelais = 0;
+            for(Double d : delaisList)
+            {
+                sommeDelais += d;
+            }
+            double delaisMoyen = 0;
+            if(delaisList.size() > 0)
+            {
+                delaisMoyen = sommeDelais / delaisList.size();
+            }
+            stat.setDelaisMoyen(delaisMoyen);
+        }
+        
+        return stat;
+    }
+    public RouteDashboard getStRouteDashboard()
+    {
+        RouteDashboard dashboard = new RouteDashboard();
+        List<RouteStatus> statusList = routeStatusRepository.findAll();
+        List<StatHistorique> statList = new ArrayList<>();
+        Double totalDelais = 0.0;
+        for(int i=0;i<statusList.size();i++)
+        {
+            RouteStatus status = statusList.get(i);
+            Integer id_status_suivant = null;
+            if(i<statusList.size()-1)
+            {
+                id_status_suivant = statusList.get(i+1).getId();
+            }
+            StatHistorique stat = getStatHistoriqueByStatus(status.getId(),id_status_suivant);
+            statList.add(stat);
+
+        }
+        dashboard.setStatistiques(statList);
+        for(StatHistorique sh : statList)
+        {
+            if(sh.getDelaisMoyen() != null)
+            {
+                totalDelais += sh.getDelaisMoyen();
             }
         }
-        List<RouteEntrepriseDto> entrepriseList = new ArrayList<>(entrepriseListEntity.size());
-        for (int i = 0; i < entrepriseListEntity.size(); i++) {
-            entrepriseList.add(entrepriseListEntity.get(i).toDto());
+        Double delaisMoyenGlobal = 0.0;
+        if(statList.size() > 0)
+        {
+            delaisMoyenGlobal = totalDelais / statList.size();
         }
-
-        List<RouteProblemeDto> dtoList = new ArrayList<>(problemeList.size());
-        for (int i = 0; i < problemeList.size(); i++) {
-            dtoList.add(problemeList.get(i).toDto());
-        }
-        List<RouteStatus> statusList = routeStatusRepository.findAll();
-        List<RouteStatusDto> statusDtoList = new ArrayList<>(statusList.size());
-        for (int i = 0; i < statusList.size(); i++) {
-            statusDtoList.add(statusList.get(i).toDto());
-        }
-        RouteDashboard routes = RouteDashboard.calcul(dtoList, statusDtoList, entrepriseList);
-        String data = Hjson.toJson(routes);
+        dashboard.setDelaisMoyenGlobal(delaisMoyenGlobal);
+        return dashboard;
+    }
+    public String getProblemeDashboard() {
+        RouteDashboard dashboard = getStRouteDashboard();
+        String data = Hjson.toJson(dashboard);
         return Hjson.formatJson(data, "success", "Data fetched successfully");
+
     }
 }
