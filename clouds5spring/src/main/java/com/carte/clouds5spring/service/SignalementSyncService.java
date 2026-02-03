@@ -122,6 +122,10 @@ public class SignalementSyncService
             //         rp.getLongitude().doubleValue()
             //     ));
             // }
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 
             if (rp.getFirebaseId() == null || rp.getFirebaseId().isEmpty()) {
                 
