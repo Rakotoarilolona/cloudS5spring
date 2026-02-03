@@ -34,7 +34,7 @@ public class SignalementSyncService
 
 
     public List<FirebaseRouteProblemeDTO> syncFirebaseToLocal () throws Exception {
-    public List<FirebaseRouteProblemeDTO> syncFirebaseToLocal () throws Exception {
+
         Firestore db = FirestoreClient.getFirestore();
         CollectionReference ref = db.collection("signalements");
 
