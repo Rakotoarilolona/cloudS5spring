@@ -34,6 +34,7 @@ public class SignalementSyncService
 
 
     public List<FirebaseRouteProblemeDTO> syncFirebaseToLocal () throws Exception {
+    public List<FirebaseRouteProblemeDTO> syncFirebaseToLocal () throws Exception {
         Firestore db = FirestoreClient.getFirestore();
         CollectionReference ref = db.collection("signalements");
 
@@ -109,6 +110,7 @@ public class SignalementSyncService
             Map<String, Object> data = new HashMap<>();
 
             // data.put("surface", rp.getSurface() != null ? rp.getSurface().doubleValue() : null);
+            // data.put("surface", rp.getSurface() != null ? rp.getSurface().doubleValue() : null);
             data.put("budget", rp.getBudget() != null ? rp.getBudget().doubleValue() : null);
             data.put("status", rp.getRouteStatus() != null ? rp.getRouteStatus().getLabel() : null);
             data.put("entreprise", rp.getRouteEntreprise() != null ? rp.getRouteEntreprise().getLabel() : null);
@@ -122,10 +124,14 @@ public class SignalementSyncService
             //         rp.getLongitude().doubleValue()
             //     ));
             // }
-<<<<<<< Updated upstream
-=======
 
->>>>>>> Stashed changes
+            // if (rp.getLatitude() != null && rp.getLongitude() != null) {
+            //     data.put("localisation", new GeoPoint(
+            //         rp.getLatitude().doubleValue(),
+            //         rp.getLongitude().doubleValue()
+            //     ));
+            // }
+
 
             if (rp.getFirebaseId() == null || rp.getFirebaseId().isEmpty()) {
                 
