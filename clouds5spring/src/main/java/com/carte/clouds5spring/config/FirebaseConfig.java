@@ -19,7 +19,7 @@ public class FirebaseConfig
         try {
             InputStream serviceAccount =
                 getClass().getClassLoader()
-                    .getResourceAsStream("firebase-service-account.json");
+                    .getResourceAsStream("clouds5mobile-firebase-adminsdk-fbsvc-b25e2a3a9f.json");
 
             FirebaseOptions options = FirebaseOptions.builder()
                 .setCredentials(GoogleCredentials.fromStream(serviceAccount))
