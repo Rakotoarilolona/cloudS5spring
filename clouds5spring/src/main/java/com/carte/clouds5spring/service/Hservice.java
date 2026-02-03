@@ -130,11 +130,7 @@ public class Hservice {
                 totalDelais += sh.getDelaisMoyen();
             }
         }
-        Double delaisMoyenGlobal = 0.0;
-        if(statList.size() > 0)
-        {
-            delaisMoyenGlobal = totalDelais / statList.size();
-        }
+        Double delaisMoyenGlobal = totalDelais;
         dashboard.setDelaisMoyenGlobal(delaisMoyenGlobal);
         return dashboard;
     }
