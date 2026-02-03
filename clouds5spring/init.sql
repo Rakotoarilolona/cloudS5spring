@@ -1,10 +1,11 @@
-DROP TABLE IF EXISTS historiquestatusroute;
-DROP TABLE IF EXISTS routeprobleme;
-DROP TABLE IF EXISTS usertentativehistorique;
-DROP TABLE IF EXISTS user_;
-DROP TABLE IF EXISTS routestatus;
-DROP TABLE IF EXISTS routeentreprise;
-DROP TABLE IF EXISTS userrole;
+-- Truncate avec réinitialisation des séquences auto-incrément
+TRUNCATE TABLE historiquestatusroute RESTART IDENTITY;
+TRUNCATE TABLE routeprobleme RESTART IDENTITY;
+TRUNCATE TABLE usertentativehistorique RESTART IDENTITY;
+TRUNCATE TABLE user_ RESTART IDENTITY;
+TRUNCATE TABLE routestatus RESTART IDENTITY;
+TRUNCATE TABLE routeentreprise RESTART IDENTITY;
+TRUNCATE TABLE userrole RESTART IDENTITY;
 
 CREATE TABLE userrole(
    id SERIAL,
