@@ -39,7 +39,8 @@ CREATE TABLE IF NOT EXISTS user_(
    firebase_uid VARCHAR(255),  -- Colonne manquante (nom correspondant à l'entité)
    PRIMARY KEY(id),
    FOREIGN KEY(id_userrole) REFERENCES userrole(id),
-   UNIQUE(firebase_uid)  -- Contrainte d'unicité
+   UNIQUE(firebase_uid),  -- Contrainte d'unicité
+   UNIQUE(pseudo, email, password)
 );
 
 CREATE TABLE IF NOT EXISTS usertentativehistorique(
