@@ -1,6 +1,7 @@
 package com.carte.clouds5spring.controller;
 
 import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -8,24 +9,32 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 import com.carte.clouds5spring.dto.ApiResponse;
 import com.carte.clouds5spring.dto.AssignEntrepriseDto;
+import com.carte.clouds5spring.dto.HistoriqueStatusRouteDto;
 import com.carte.clouds5spring.dto.RouteProblemeDto;
+import com.carte.clouds5spring.entity.HistoriqueStatusRoute;
 import com.carte.clouds5spring.entity.RouteProbleme;
+import com.carte.clouds5spring.service.HistoriqueStatusRouteService;
 import com.carte.clouds5spring.service.RouteProblemeService;
 import com.carte.clouds5spring.service.SignalementSyncService;
+import com.carte.clouds5spring.service.SignalementSyncService;
+import com.carte.clouds5spring.service.HistoriqueStatusRouteService;
 import io.swagger.v3.oas.annotations.Operation;
 
 @RestController
 @RequestMapping("/signalements")
-public class SignalementController {
-
+public class SignalementController 
+{
     private final RouteProblemeService routeProblemeService;
     private final SignalementSyncService signalementSyncService;
+    private final HistoriqueStatusRouteService historiqueStatusRouteService;
 
-    public SignalementController(RouteProblemeService routeProblemeService, SignalementSyncService signalementSyncService) {
+    public SignalementController(RouteProblemeService routeProblemeService, SignalementSyncService signalementSyncService, HistoriqueStatusRouteService historiqueStatusRouteService) {
         this.routeProblemeService = routeProblemeService;
         this.signalementSyncService = signalementSyncService;
+        this.historiqueStatusRouteService = historiqueStatusRouteService;
     }
 
 
@@ -59,6 +68,13 @@ public class SignalementController {
         return ApiResponse.success("Entreprise assignée avec succès");
     }
 
+    @GetMapping("/{id}/historique-status")
+    public ApiResponse<List<HistoriqueStatusRouteDto>> getHistoriqueStatusBySignalementId(
+            @PathVariable Integer id) {
+        return ApiResponse.success(
+            historiqueStatusRouteService.getHistoriqueStatusBySignalementId(id)
+        );
+    }
 
 
 }

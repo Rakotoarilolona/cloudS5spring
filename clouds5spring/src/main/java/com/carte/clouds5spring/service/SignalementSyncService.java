@@ -123,7 +123,6 @@ public class SignalementSyncService
                 ));
             }
 
-
             if (rp.getFirebaseId() == null || rp.getFirebaseId().isEmpty()) {
                 
                 DocumentReference newDoc = ref.document();
