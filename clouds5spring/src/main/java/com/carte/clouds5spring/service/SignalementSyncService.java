@@ -2,6 +2,8 @@ package com.carte.clouds5spring.service;
 
 import com.carte.clouds5spring.dto.FirebaseRouteProblemeDTO;
 import com.carte.clouds5spring.entity.RouteProbleme;
+import com.carte.clouds5spring.entity.HistoriqueStatusRoute;
+import com.carte.clouds5spring.repository.HistoriqueStatusRouteRepository;
 import com.carte.clouds5spring.repository.RouteEntrepriseRepository;
 import com.carte.clouds5spring.repository.RouteProblemeRepository;
 import com.carte.clouds5spring.repository.RouteStatusRepository;
@@ -25,11 +27,14 @@ public class SignalementSyncService
 
     private final RouteStatusRepository statusRepository;
 
+    private final HistoriqueStatusRouteRepository historiqueStatusRouteRepository;
+
     public SignalementSyncService(RouteProblemeRepository routeProblemeRepository, 
-        RouteEntrepriseRepository r, RouteStatusRepository s) {
+        RouteEntrepriseRepository r, RouteStatusRepository s , HistoriqueStatusRouteRepository h) {
         this.routeProblemeRepository = routeProblemeRepository;
         this.entrepriseRepository = r;
         this.statusRepository = s;
+        this.historiqueStatusRouteRepository = h;
     }
 
 
@@ -45,6 +50,19 @@ public class SignalementSyncService
             data.put("firebaseId", doc.getId());
 
             FirebaseRouteProblemeDTO dto = new FirebaseRouteProblemeDTO();
+            String updatedAt=getString(data, "updatedAt", null);
+            LocalDateTime updatedAtLdt = null;
+            if(updatedAt!=null)
+            {
+                Timestamp ts = doc.getTimestamp("updatedAt");
+                updatedAtLdt = ts.toDate().toInstant()
+                    .atZone(java.time.ZoneId.systemDefault())
+                    .toLocalDateTime();
+            }
+            if(updatedAtLdt==null)
+            {
+                updatedAtLdt = LocalDateTime.now();
+            }
             dto.setFirebaseId(getString(data, "firebaseId", null));
             dto.setSurface(getBigDecimal(data, "surface"));
             dto.setBudget(getBigDecimal(data, "budget"));
@@ -72,12 +90,12 @@ public class SignalementSyncService
             if (rp == null) {
                 rp = new RouteProbleme();
                 rp.setFirebaseId(dto.getFirebaseId());
-                rp.setUpdatedAt(LocalDateTime.now());
+                rp.setUpdatedAt(updatedAtLdt);
             }
 
             rp.setSurface(dto.getSurface());
             rp.setBudget(dto.getBudget());
-            rp.setUpdatedAt(LocalDateTime.now());
+            rp.setUpdatedAt(updatedAtLdt);
             rp.setLatitude(dto.getLatitude());
             rp.setLongitude(dto.getLongitude());
             rp.setProblemeDescription(dto.getDescription());
@@ -91,6 +109,14 @@ public class SignalementSyncService
             }
             if (dto.getIdStatus() != null) {
                 rp.setRouteStatus(statusRepository.findById(Integer.valueOf(dto.getIdStatus())).orElse(null));
+            }
+            else
+            {
+                HistoriqueStatusRoute hsr = new HistoriqueStatusRoute();
+                hsr.setDateHistorique(updatedAtLdt);
+                hsr.setRouteProbleme(rp);
+                hsr.setRouteStatus(rp.getRouteStatus());
+                historiqueStatusRouteRepository.save(hsr);
             }
             routeProblemeRepository.save(rp);
         }
