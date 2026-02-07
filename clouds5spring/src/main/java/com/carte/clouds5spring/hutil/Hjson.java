@@ -31,7 +31,7 @@ public class Hjson {
         try {
             return objectMapper.writeValueAsString(obj);
         } catch (Exception e) {
-            throw new RuntimeException("Erreur lors de la transformation en JSON", e);
+            throw new RuntimeException("Erreur lors de la transformation en JSON"+e.getMessage(), e);
         }
     }
     
@@ -45,7 +45,7 @@ public class Hjson {
         try {
             return objectMapper.writeValueAsString(objects);
         } catch (Exception e) {
-            throw new RuntimeException("Erreur lors de la transformation de la liste en JSON", e);
+            throw new RuntimeException("Erreur lors de la transformation de la liste en JSON"+e.getMessage(), e);
         }
     }
     
@@ -60,7 +60,7 @@ public class Hjson {
         try {
             return objectMapper.writeValueAsString(objects);
         } catch (Exception e) {
-            throw new RuntimeException("Erreur lors de la transformation de la liste en JSON", e);
+            throw new RuntimeException("Erreur lors de la transformation de la liste en JSON"+e.getMessage(), e);
         }
     }
     public static String formatJson(String data, String status, String message)
