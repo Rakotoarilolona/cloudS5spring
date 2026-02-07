@@ -9,7 +9,7 @@ public class HistoriqueStatusRouteDto {
     private LocalDateTime dateHistorique;
 
     // Infos du signalement
-    private Integer routeProblemeId;
+    private RouteProblemeDto routeProbleme;
 
     // Infos du statut
     private Integer routeStatusId;
@@ -19,12 +19,12 @@ public class HistoriqueStatusRouteDto {
 
     public HistoriqueStatusRouteDto(Integer id,
                                     LocalDateTime dateHistorique,
-                                    Integer routeProblemeId,
+                                    RouteProblemeDto routeProbleme,
                                     Integer routeStatusId,
                                     String routeStatusLabel) {
         this.id = id;
         this.dateHistorique = dateHistorique;
-        this.routeProblemeId = routeProblemeId;
+        this.routeProbleme = routeProbleme;
         this.routeStatusId = routeStatusId;
         this.routeStatusLabel = routeStatusLabel;
     }
@@ -46,12 +46,12 @@ public class HistoriqueStatusRouteDto {
         this.dateHistorique = dateHistorique;
     }
 
-    public Integer getRouteProblemeId() {
-        return routeProblemeId;
+    public RouteProblemeDto getRouteProbleme() {
+        return routeProbleme;
     }
 
-    public void setRouteProblemeId(Integer routeProblemeId) {
-        this.routeProblemeId = routeProblemeId;
+    public void setRouteProbleme(RouteProblemeDto routeProbleme) {
+        this.routeProbleme = routeProbleme;
     }
 
     public Integer getRouteStatusId() {

@@ -31,11 +31,11 @@ public class HistoriqueStatusRouteService
                 .findByRouteProblemeIdOrderByDateHistoriqueDesc(routeProblemeId)
                 .stream()
                 .map(h -> new HistoriqueStatusRouteDto(
-                        h.getId(),
-                        h.getDateHistorique(),
-                        h.getRouteProbleme().getId(),
-                        h.getRouteStatus().getId(),
-                        h.getRouteStatus().getLabel()
+                    h.getId(),
+                    h.getDateHistorique(),
+                    h.getRouteProbleme().toDto(),
+                    h.getRouteStatus().getId(),
+                    h.getRouteStatus().getLabel()
                 ))
                 .toList();
     }

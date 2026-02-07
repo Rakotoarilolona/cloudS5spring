@@ -72,7 +72,7 @@ public class Hservice {
             problemeListDto.add(new HistoriqueStatusRouteDto(
                 hsr.getId(),
                 hsr.getDateHistorique(),
-                hsr.getRouteProbleme().getId(),
+                hsr.getRouteProbleme().toDto(),
                 hsr.getRouteStatus().getId(),
                 hsr.getRouteStatus().getLabel()
             ));
