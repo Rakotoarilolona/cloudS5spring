@@ -67,7 +67,17 @@ public class Hservice {
         RouteStatusDto statusDto = status.get().toDto();
         stat.setStatus(statusDto);
         List<HistoriqueStatusRoute> problemeList = historiqueStatusRouteRepository.findByRouteStatus_Id(id_status);
-        stat.setProblemeList(problemeList);
+        List<HistoriqueStatusRouteDto> problemeListDto = new ArrayList<>(problemeList.size());
+        for (HistoriqueStatusRoute hsr : problemeList) {
+            problemeListDto.add(new HistoriqueStatusRouteDto(
+                hsr.getId(),
+                hsr.getDateHistorique(),
+                hsr.getRouteProbleme().getId(),
+                hsr.getRouteStatus().getId(),
+                hsr.getRouteStatus().getLabel()
+            ));
+        }
+        stat.setProblemeList(problemeListDto);
         if(id_status_suivant!=null)
         {
             List<HistoriqueStatusRoute> problemeListNext = historiqueStatusRouteRepository.findByRouteStatus_Id(id_status_suivant);
