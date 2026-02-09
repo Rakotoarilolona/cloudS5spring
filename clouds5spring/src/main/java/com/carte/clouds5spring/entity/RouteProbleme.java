@@ -69,7 +69,7 @@ public class RouteProbleme {
 
     @JsonIgnore
     @OneToMany(mappedBy = "routeProbleme", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Photo> photos;
+    private List<Photo> photos = new java.util.ArrayList<>();
 
 
 
@@ -80,7 +80,26 @@ public class RouteProbleme {
     }
 
     public void setPhotos(List<Photo> photos) {
-        this.photos = photos;
+        if (photos == this.photos) {
+            return;
+        }
+
+        if (this.photos == null) {
+            this.photos = new java.util.ArrayList<>();
+        } else {
+            this.photos.clear();
+        }
+
+        if (photos == null) {
+            return;
+        }
+
+        for (Photo photo : photos) {
+            if (photo != null) {
+                photo.setRouteProbleme(this);
+                this.photos.add(photo);
+            }
+        }
     }
 
     public Integer getId() {

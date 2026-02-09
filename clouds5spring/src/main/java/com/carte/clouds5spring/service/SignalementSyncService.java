@@ -125,21 +125,23 @@ public class SignalementSyncService
                 hsr.setRouteProbleme(rp);
                 hsr.setRouteStatus(rp.getRouteStatus());
                 historiqueStatusRouteRepository.save(hsr);
+
+                
             }
-            Object image= data.get("images");
-            List<Photo> photos = new ArrayList<>();
-            if(image!=null)
-            {
-                List<String> images = (List<String>) image;
-                for(String img : images)
-                {
-                    Photo p = new Photo();
-                    p.setBytes(java.util.Base64.getDecoder().decode(img));
-                    p.setRouteProbleme(rp);
-                    photos.add(p);
-                }
-                rp.setPhotos(photos);
-            }
+            // Object image= data.get("images");
+            // List<Photo> photos = new ArrayList<>();
+            // if(image!=null)
+            // {
+            //     List<String> images = (List<String>) image;
+            //     for(String img : images)
+            //     {
+            //         Photo p = new Photo();
+            //         p.setBytes(java.util.Base64.getDecoder().decode(img));
+            //         p.setRouteProbleme(rp);
+            //         photos.add(p);
+            //     }
+            //     rp.setPhotos(photos);
+            // }
             routeProblemeRepository.save(rp);
         }
 
