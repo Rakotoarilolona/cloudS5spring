@@ -1,6 +1,7 @@
 package com.carte.clouds5spring.dto;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import com.carte.clouds5spring.entity.RouteProbleme;
 
@@ -16,6 +17,7 @@ public class RouteProblemeDto {
     private BigDecimal longitude;
     private BigDecimal latitude;
     private RouteEntrepriseDto entreprise;
+    private List<PhotoDto> photos;
 
     public RouteProblemeDto(
             Integer id,
@@ -131,11 +133,15 @@ public class RouteProblemeDto {
     public void setEntreprise(RouteEntrepriseDto entreprise) {
         this.entreprise = entreprise;
     }
+
+    public List<PhotoDto> getPhotos() {
+        return photos;
+    }
+
+    public void setPhotos(List<PhotoDto> photos) {
+        this.photos = photos;
+    }
     public RouteProbleme toEntity() {
-        if (this == null) {
-            return null;
-        }
-        
         RouteProbleme entity = new RouteProbleme();
         if(this.getId() != null) {
             entity.setId(this.getId());

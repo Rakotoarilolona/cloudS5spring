@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.carte.clouds5spring.dto.PhotoDto;
 import com.carte.clouds5spring.dto.RouteProblemeDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -158,11 +159,6 @@ public class RouteProbleme {
     }
 
     public RouteProblemeDto toDto() {
-        if (this == null) {
-            return null;
-        }
-
-        
         RouteProblemeDto dto = new RouteProblemeDto();
         if(this.getId() != null) {
             dto.setId(this.getId());
@@ -189,6 +185,14 @@ public class RouteProbleme {
         }
         if(this.getProblemeDescription() != null) {
             dto.setProblemeDescription(this.getProblemeDescription());
+        }
+
+        if (this.getPhotos() != null && !this.getPhotos().isEmpty()) {
+            java.util.ArrayList<PhotoDto> photoDtos = new java.util.ArrayList<>(this.getPhotos().size());
+            for (Photo p : this.getPhotos()) {
+                photoDtos.add(PhotoDto.fromEntity(p, false));
+            }
+            dto.setPhotos(photoDtos);
         }
 
         return dto;
