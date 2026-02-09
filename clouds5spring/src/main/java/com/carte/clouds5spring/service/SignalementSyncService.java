@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.carte.clouds5spring.dto.FirebaseRouteProblemeDTO;
 import com.carte.clouds5spring.entity.RouteProbleme;
 import com.carte.clouds5spring.entity.HistoriqueStatusRoute;
+import com.carte.clouds5spring.entity.Photo;
 import com.carte.clouds5spring.repository.HistoriqueStatusRouteRepository;
 import com.carte.clouds5spring.repository.RouteEntrepriseRepository;
 import com.carte.clouds5spring.repository.RouteProblemeRepository;
@@ -124,6 +125,20 @@ public class SignalementSyncService
                 hsr.setRouteProbleme(rp);
                 hsr.setRouteStatus(rp.getRouteStatus());
                 historiqueStatusRouteRepository.save(hsr);
+            }
+            Object image= data.get("image");
+            List<Photo> photos = new ArrayList<>();
+            if(image!=null)
+            {
+                List<String> images = (List<String>) image;
+                for(String img : images)
+                {
+                    Photo p = new Photo();
+                    p.setBytes(java.util.Base64.getDecoder().decode(img));
+                    p.setRouteProbleme(rp);
+                    photos.add(p);
+                }
+                rp.setPhotos(photos);
             }
             routeProblemeRepository.save(rp);
         }
