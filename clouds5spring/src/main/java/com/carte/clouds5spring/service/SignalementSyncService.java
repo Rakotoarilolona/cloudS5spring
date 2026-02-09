@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
+import org.springframework.util.RouteMatcher.Route;
 
 import com.carte.clouds5spring.dto.FirebaseRouteProblemeDTO;
 import com.carte.clouds5spring.entity.RouteProbleme;
@@ -108,41 +109,80 @@ public class SignalementSyncService
             rp.setLongitude(dto.getLongitude());
             rp.setProblemeDescription(dto.getDescription());
 
-            rp.setRouteEntreprise(null);
-            rp.setRouteStatus(null);
+            // Ne pas écraser les valeurs existantes si Firebase ne fournit pas les IDs.
             rp.setUser(null);
+
+            Integer previousStatusId = rp.getRouteStatus() != null ? rp.getRouteStatus().getId() : null;
 
             if (dto.getIdEntreprise() != null) {
                 rp.setRouteEntreprise(entrepriseRepository.findById(Integer.valueOf(dto.getIdEntreprise())).orElse(null));
             }
+            int isNewStatus = 0;
             if (dto.getIdStatus() != null) {
                 rp.setRouteStatus(statusRepository.findById(Integer.valueOf(dto.getIdStatus())).orElse(null));
             }
             else
             {
-                HistoriqueStatusRoute hsr = new HistoriqueStatusRoute();
-                hsr.setDateHistorique(updatedAtLdt);
-                hsr.setRouteProbleme(rp);
-                hsr.setRouteStatus(rp.getRouteStatus());
-                historiqueStatusRouteRepository.save(hsr);
-
-                
+                isNewStatus = 1;
+                rp.setRouteStatus(statusRepository.findById(1).orElse(null)); // Status "Nouveau" par défaut
             }
-            // Object image= data.get("images");
-            // List<Photo> photos = new ArrayList<>();
-            // if(image!=null)
-            // {
-            //     List<String> images = (List<String>) image;
-            //     for(String img : images)
-            //     {
-            //         Photo p = new Photo();
-            //         p.setBytes(java.util.Base64.getDecoder().decode(img));
-            //         p.setRouteProbleme(rp);
-            //         photos.add(p);
-            //     }
-            //     rp.setPhotos(photos);
-            // }
-            routeProblemeRepository.save(rp);
+
+            // Photos: on met à jour la collection, puis on laisse cascade persist.
+            Object image = data.get("images");
+            List<Photo> photos = new ArrayList<>();
+            if (image instanceof List<?>) {
+                for (Object imgObj : (List<?>) image) {
+                    if (imgObj instanceof String img && img != null && !img.isBlank()) {
+                        try {
+                            // Support "data:image/...;base64,..." ou base64 brut
+                            if (img.startsWith("data:image/")) {
+                                String[] parts = img.split(",", 2);
+                                if (parts.length == 2) {
+                                    img = parts[1];
+                                }
+                            }
+                            Photo p = new Photo();
+                            p.setBytes(java.util.Base64.getDecoder().decode(img));
+                            p.setRouteProbleme(rp);
+                            photos.add(p);
+                        } catch (IllegalArgumentException e) {
+                            System.err.println("Erreur de décodage base64: " + e.getMessage());
+                        }
+                    }
+                }
+            } else if (image instanceof String img && img != null && !img.isBlank()) {
+                try {
+                    if (img.startsWith("data:image/")) {
+                        String[] parts = img.split(",", 2);
+                        if (parts.length == 2) {
+                            img = parts[1];
+                        }
+                    }
+                    Photo p = new Photo();
+                    p.setBytes(java.util.Base64.getDecoder().decode(img));
+                    p.setRouteProbleme(rp);
+                    photos.add(p);
+                } catch (IllegalArgumentException e) {
+                    System.err.println("Erreur de décodage base64: " + e.getMessage());
+                }
+            }
+            if (image != null) {
+                // Appliquer même si vide pour vider les anciennes photos.
+                rp.setPhotos(photos);
+            }
+
+            // Sauver d'abord RouteProbleme: nécessaire avant tout historique.
+            RouteProbleme savedRp = routeProblemeRepository.save(rp);
+
+            // Historique: FK routeProbleme/routeStatus sont NOT NULL.
+            if (isNewStatus==1) 
+            {
+                HistoriqueStatusRoute hist = new HistoriqueStatusRoute();
+                hist.setRouteProbleme(savedRp);
+                hist.setRouteStatus(statusRepository.findById(1).orElse(null)); // Status "Nouveau" par défaut
+                hist.setDateHistorique(updatedAtLdt);
+                historiqueStatusRouteRepository.save(hist);
+            }
         }
 
         return dtoList;
