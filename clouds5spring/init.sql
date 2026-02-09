@@ -1,4 +1,5 @@
 -- Truncate avec réinitialisation des séquences auto-incrément
+DROP TABLE IF EXISTS photo CASCADE;
 DROP TABLE IF EXISTS historiquestatusroute CASCADE;
 DROP TABLE IF EXISTS routeprobleme CASCADE;
 DROP TABLE IF EXISTS usertentativehistorique CASCADE;
@@ -79,8 +80,17 @@ CREATE TABLE IF NOT EXISTS historiquestatusroute(
    FOREIGN KEY(id_routestatus) REFERENCES routestatus(id)
 );
 
+CREATE TABLE photo(
+   id SERIAL,
+   bytes BYTEA,
+   id_routeprobleme INTEGER,
+   PRIMARY KEY(id),
+   FOREIGN KEY(id_routeprobleme) REFERENCES routeprobleme(id)
+);
+
+
 -- Option 1: Tronquer avec CASCADE (recommandé)
-TRUNCATE TABLE historiquestatusroute, routeprobleme, usertentativehistorique, user_, routestatus, routeentreprise, userrole 
+TRUNCATE TABLE photo, historiquestatusroute, routeprobleme, usertentativehistorique, user_, routestatus, routeentreprise, userrole
 RESTART IDENTITY CASCADE;
 
 -- Option 2: Tronquer dans l'ordre inverse des dépendances
