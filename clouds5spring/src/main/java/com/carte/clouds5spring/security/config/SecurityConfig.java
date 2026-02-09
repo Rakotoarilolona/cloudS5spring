@@ -53,7 +53,6 @@ public class SecurityConfig
 					"/auth/login",
 					"/signalements",
 					"/admin/firebase-signalements",
-					"/admin/sync/firebase",
 					"/signalements/{id}"
 				).permitAll()
 				.anyRequest().authenticated())
