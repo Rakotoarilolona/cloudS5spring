@@ -136,3 +136,12 @@ INSERT INTO user_(pseudo, email, password, nbrtentative, id_userrole, blockedAt,
 UPDATE user_
 SET password = 'manager4'
 WHERE id = 4;
+
+-- INSERT INTO photo (bytes, id_routeprobleme)
+-- VALUES (lo_get(lo_import('C:\Users\HP\Pictures\3689760.jpg')), 29);
+INSERT INTO photo (bytes, id_routeprobleme)
+VALUES (
+  pg_read_binary_file('D:\recap.png'),
+  29
+);
+
