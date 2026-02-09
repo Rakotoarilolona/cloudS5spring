@@ -126,7 +126,7 @@ public class SignalementSyncService
                 hsr.setRouteStatus(rp.getRouteStatus());
                 historiqueStatusRouteRepository.save(hsr);
             }
-            Object image= data.get("image");
+            Object image= data.get("images");
             List<Photo> photos = new ArrayList<>();
             if(image!=null)
             {
