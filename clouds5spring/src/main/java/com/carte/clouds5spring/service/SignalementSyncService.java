@@ -1,5 +1,14 @@
 package com.carte.clouds5spring.service;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.stereotype.Service;
+
 import com.carte.clouds5spring.dto.FirebaseRouteProblemeDTO;
 import com.carte.clouds5spring.entity.RouteProbleme;
 import com.carte.clouds5spring.entity.HistoriqueStatusRoute;
@@ -8,15 +17,13 @@ import com.carte.clouds5spring.repository.RouteEntrepriseRepository;
 import com.carte.clouds5spring.repository.RouteProblemeRepository;
 import com.carte.clouds5spring.repository.RouteStatusRepository;
 import com.google.cloud.Timestamp;
-import com.google.cloud.firestore.*;
+import com.google.cloud.firestore.CollectionReference;
+import com.google.cloud.firestore.DocumentReference;
+import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.GeoPoint;
+import com.google.cloud.firestore.QueryDocumentSnapshot;
+import com.google.cloud.firestore.SetOptions;
 import com.google.firebase.cloud.FirestoreClient;
-import org.springframework.stereotype.Service;
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Service
 public class SignalementSyncService 
@@ -148,7 +155,6 @@ public class SignalementSyncService
             //         rp.getLongitude().doubleValue()
             //     ));
             // }
-
 
             if (rp.getFirebaseId() == null || rp.getFirebaseId().isEmpty()) {
                 
