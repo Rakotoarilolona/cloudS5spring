@@ -1,0 +1,168 @@
+
+services:
+  # ---------------------
+  # OSM IMPORT (s'exécute une fois puis s'arrête)
+  # ---------------------
+  osm-import:
+    image: overv/openstreetmap-tile-server
+    container_name: osm_import
+    volumes:
+      - ./Cloud_Vue/osm-server/data/madagascar.osm.pbf:/data/region.osm.pbf
+      - osm-data:/data/database
+    environment:
+      - SKIP_EXTERNAL_DATA=true  # On saute les téléchargements externes pour accélérer
+    command: import
+    restart: "no"
+    networks:
+      - app-network
+
+  # ---------------------
+  # SERVICE D'ATTENTE
+  # ---------------------
+  wait-for-import:
+    image: alpine:latest
+    container_name: wait_for_import
+    command: >
+      sh -c "
+      echo 'En attente de la fin de l''import OSM...';
+      while [ ! -f /data/database/planet-import-complete ]; do
+        sleep 10;
+        echo 'Import OSM encore en cours...';
+      done;
+      echo 'Import OSM terminé!';
+      "
+    volumes:
+      - osm-data:/data/database
+    depends_on:
+      - osm-import
+    networks:
+      - app-network
+    restart: "no"
+
+  # ---------------------
+  # OSM TILE SERVER
+  # ---------------------
+  osm-server:
+    image: overv/openstreetmap-tile-server
+    container_name: osm_server
+    volumes:
+      - osm-data:/data/database
+    ports:
+      - "8080:80"
+    command: run
+    depends_on:
+      wait-for-import:
+        condition: service_completed_successfully
+    restart: unless-stopped
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
+
+  # ---------------------
+  # DATABASE - POSTGRES
+  # ---------------------
+  db:
+    image: postgres:16
+    container_name: clouds5_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: clouds5
+    ports:
+      - "5434:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./cloudS5spring/clouds5spring/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - app-network
+    depends_on:
+      wait-for-import:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # ---------------------
+  # BACKEND - SPRING BOOT
+  # ---------------------
+  app:
+    build:
+      context: ./cloudS5spring/clouds5spring
+      dockerfile: Dockerfile
+    container_name: clouds5_spring
+    depends_on:
+      - db
+      - osm-server
+    ports:
+      - "8081:8080"
+    environment:
+      SERVER_PORT: 8080
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/clouds5
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_HIBERNATE_NAMING_PHYSICAL_STRATEGY: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+      SPRING_PROFILES_ACTIVE: docker
+      SPRINGDOC_API_DOCS_PATH: /api-docs
+      SPRINGDOC_SWAGGER_UI_PATH: /swagger-ui.html
+      SPRINGDOC_SWAGGER_UI_ENABLED: true
+      SPRINGDOC_SWAGGER_UI_TAGS_SORTER: alpha
+      SPRINGDOC_API_DOCS_GROUPS_ENABLED: true
+      OSM_TILE_SERVER_URL: http://osm-server:80
+      MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: health,info
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
+    volumes:
+      - ./cloudS5spring/clouds5spring/src:/app/src
+      - ./cloudS5spring/clouds5spring/pom.xml:/app/pom.xml
+      - maven_repo:/root/.m2
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # ---------------------
+  # FRONTEND - VUEJS
+  # ---------------------
+  vue-app:
+    build:
+      context: ./Cloud_Vue
+      dockerfile: Dockerfile
+    image: vue-app:dev
+    container_name: vue_dev
+    ports:
+      - "5174:5173"
+    volumes:
+      - ./Cloud_Vue:/app
+      - /app/node_modules
+    environment:
+      - VITE_BACK_BASE_URL=http://localhost:8081
+      - VITE_OSM_TILE_SERVER_URL=http://localhost:8080
+    command: ["npm", "run", "dev", "--", "--host=0.0.0.0"]
+    networks:
+      - app-network
+    depends_on:
+      - app
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  db_data:
+  maven_repo:
+  osm-data:
