@@ -16,7 +16,7 @@ public class JwtUtil {
     private static final String SECRET =
             "clouds5spring-secret-key-clouds5spring-256bits";
 
-    private static final long EXPIRATION_MS = 30 * 60 * 1000; // 30 min
+    private static final long EXPIRATION_MS = 60 * 60 * 1000; // 30 min
 
     private final Key key = Keys.hmacShaKeyFor(SECRET.getBytes());
 

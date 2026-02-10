@@ -6,6 +6,7 @@ public class AssignEntrepriseDto
 {
     private Integer entrepriseId;
     private BigDecimal budget;
+    private Integer niveau;
     
     public Integer getEntrepriseId() {
         return entrepriseId;
@@ -18,5 +19,13 @@ public class AssignEntrepriseDto
     }
     public void setBudget(BigDecimal budget) {
         this.budget = budget;
+    }
+
+    public Integer getNiveau() {
+        return niveau;
+    }
+
+    public void setNiveau(Integer niveau) {
+        this.niveau = niveau;
     }
 }

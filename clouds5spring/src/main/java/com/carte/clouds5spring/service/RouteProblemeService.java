@@ -151,6 +151,7 @@ public class RouteProblemeService
 
         rp.setRouteEntreprise(entreprise);
         rp.setBudget(dto.getBudget());
+        rp.setNiveau(dto.getNiveau());
 
         routeProblemeRepository.save(rp);
     }
