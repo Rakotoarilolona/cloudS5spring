@@ -6,10 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.springframework.stereotype.Service;
-import org.springframework.util.RouteMatcher.Route;
-
 import com.carte.clouds5spring.dto.FirebaseRouteProblemeDTO;
 import com.carte.clouds5spring.entity.RouteProbleme;
 import com.carte.clouds5spring.entity.HistoriqueStatusRoute;
@@ -21,15 +18,19 @@ import com.carte.clouds5spring.repository.RouteStatusRepository;
 import com.google.cloud.Timestamp;
 import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.DocumentReference;
+import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.GeoPoint;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
+import com.google.cloud.firestore.QuerySnapshot;
 import com.google.cloud.firestore.SetOptions;
 import com.google.firebase.cloud.FirestoreClient;
 
 @Service
-public class SignalementSyncService 
-{
+public class SignalementSyncService {
+
+    private final FirebaseNotificationService notificationService;
+
     private final RouteProblemeRepository routeProblemeRepository;
 
     private final RouteEntrepriseRepository entrepriseRepository;
@@ -38,16 +39,17 @@ public class SignalementSyncService
 
     private final HistoriqueStatusRouteRepository historiqueStatusRouteRepository;
 
-    public SignalementSyncService(RouteProblemeRepository routeProblemeRepository, 
-        RouteEntrepriseRepository r, RouteStatusRepository s , HistoriqueStatusRouteRepository h) {
+    public SignalementSyncService(RouteProblemeRepository routeProblemeRepository,
+            RouteEntrepriseRepository r, RouteStatusRepository s, HistoriqueStatusRouteRepository h,
+            FirebaseNotificationService notificationService) {
         this.routeProblemeRepository = routeProblemeRepository;
         this.entrepriseRepository = r;
         this.statusRepository = s;
         this.historiqueStatusRouteRepository = h;
+        this.notificationService = notificationService;
     }
 
-
-    public List<FirebaseRouteProblemeDTO> syncFirebaseToLocal () throws Exception {
+    public List<FirebaseRouteProblemeDTO> syncFirebaseToLocal() throws Exception {
         Firestore db = FirestoreClient.getFirestore();
         CollectionReference ref = db.collection("signalements");
 
@@ -59,17 +61,15 @@ public class SignalementSyncService
             data.put("firebaseId", doc.getId());
 
             FirebaseRouteProblemeDTO dto = new FirebaseRouteProblemeDTO();
-            String updatedAt=getString(data, "updatedAt", null);
+            String updatedAt = getString(data, "updatedAt", null);
             LocalDateTime updatedAtLdt = null;
-            if(updatedAt!=null)
-            {
+            if (updatedAt != null) {
                 Timestamp ts = doc.getTimestamp("updatedAt");
                 updatedAtLdt = ts.toDate().toInstant()
-                    .atZone(java.time.ZoneId.systemDefault())
-                    .toLocalDateTime();
+                        .atZone(java.time.ZoneId.systemDefault())
+                        .toLocalDateTime();
             }
-            if(updatedAtLdt==null)
-            {
+            if (updatedAtLdt == null) {
                 updatedAtLdt = LocalDateTime.now();
             }
             dto.setFirebaseId(getString(data, "firebaseId", null));
@@ -93,7 +93,6 @@ public class SignalementSyncService
 
             dtoList.add(dto);
 
-
             RouteProbleme rp = routeProblemeRepository.findByFirebaseId(dto.getFirebaseId()).orElse(null);
 
             if (rp == null) {
@@ -115,14 +114,13 @@ public class SignalementSyncService
             Integer previousStatusId = rp.getRouteStatus() != null ? rp.getRouteStatus().getId() : null;
 
             if (dto.getIdEntreprise() != null) {
-                rp.setRouteEntreprise(entrepriseRepository.findById(Integer.valueOf(dto.getIdEntreprise())).orElse(null));
+                rp.setRouteEntreprise(
+                        entrepriseRepository.findById(Integer.valueOf(dto.getIdEntreprise())).orElse(null));
             }
             int isNewStatus = 0;
             if (dto.getIdStatus() != null) {
                 rp.setRouteStatus(statusRepository.findById(Integer.valueOf(dto.getIdStatus())).orElse(null));
-            }
-            else
-            {
+            } else {
                 isNewStatus = 1;
                 rp.setRouteStatus(statusRepository.findById(1).orElse(null)); // Status "Nouveau" par défaut
             }
@@ -175,8 +173,7 @@ public class SignalementSyncService
             RouteProbleme savedRp = routeProblemeRepository.save(rp);
 
             // Historique: FK routeProbleme/routeStatus sont NOT NULL.
-            if (isNewStatus==1) 
-            {
+            if (isNewStatus == 1) {
                 HistoriqueStatusRoute hist = new HistoriqueStatusRoute();
                 hist.setRouteProbleme(savedRp);
                 hist.setRouteStatus(statusRepository.findById(1).orElse(null)); // Status "Nouveau" par défaut
@@ -188,6 +185,75 @@ public class SignalementSyncService
         return dtoList;
     }
 
+    
+    public void syncLocalToFirebaseAndNotify() throws Exception {
+        Firestore db = FirestoreClient.getFirestore();
+        CollectionReference ref = db.collection("signalements");
+
+        List<RouteProbleme> localProblemes = routeProblemeRepository.findAll();
+
+        for (RouteProbleme rp : localProblemes) {
+            Map<String, Object> data = new HashMap<>();
+            data.put("budget", rp.getBudget() != null ? rp.getBudget().doubleValue() : null);
+            data.put("status", rp.getRouteStatus() != null ? rp.getRouteStatus().getLabel() : null);
+            data.put("entreprise", rp.getRouteEntreprise() != null ? rp.getRouteEntreprise().getLabel() : null);
+            data.put("idStatus", rp.getRouteStatus() != null ? rp.getRouteStatus().getId() : null);
+            data.put("idEntreprise", rp.getRouteEntreprise() != null ? rp.getRouteEntreprise().getId() : null);
+            data.put("updatedAt", Timestamp.now());
+
+            DocumentReference docRef;
+            boolean isNew = false;
+            DocumentSnapshot existingDoc = null;
+
+            if (rp.getFirebaseId() == null || rp.getFirebaseId().isEmpty()) {
+                // Nouveau document
+                docRef = ref.document();
+                rp.setFirebaseId(docRef.getId());
+                data.put("createdAt", Timestamp.now());
+                isNew = true;
+            } else {
+                // Document existant
+                docRef = ref.document(rp.getFirebaseId());
+                existingDoc = docRef.get().get();
+            }
+
+            // Écriture dans Firestore
+            docRef.set(data, SetOptions.merge()).get();
+            routeProblemeRepository.save(rp);
+
+            // Envoi de notification si le status a changé
+            if (!isNew && existingDoc != null && existingDoc.exists()) {
+                String oldStatus = existingDoc.getString("status");
+                String newStatus = (String) data.get("status");
+
+                if (newStatus != null && !newStatus.equals(oldStatus)) {
+
+                    String firebaseUid = existingDoc.getString("idUser");
+                    if (firebaseUid != null && !firebaseUid.isEmpty()) {
+                        QuerySnapshot userQuery = db.collection("users")
+                                .whereEqualTo("firebaseUid", firebaseUid)
+                                .get()
+                                .get();
+
+                        if (!userQuery.isEmpty()) {
+                            DocumentSnapshot userDoc = userQuery.getDocuments().get(0);
+                            String fcmToken = userDoc.getString("fcmToken");
+
+                            if (fcmToken != null && !fcmToken.isEmpty()) {
+
+                                String description = existingDoc.getString("description");
+                                String updatedAt = existingDoc.getTimestamp("updatedAt") != null
+                                        ? existingDoc.getTimestamp("updatedAt").toDate().toString()
+                                        : "inconnue";
+                                String status = newStatus != null ? newStatus : "inconnu";
+                                notificationService.sendNotification(fcmToken, status, updatedAt, description);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     public void syncLocalToFirebase() throws Exception {
         Firestore db = FirestoreClient.getFirestore();
@@ -198,7 +264,8 @@ public class SignalementSyncService
         for (RouteProbleme rp : localProblemes) {
             Map<String, Object> data = new HashMap<>();
 
-            // data.put("surface", rp.getSurface() != null ? rp.getSurface().doubleValue() : null);
+            // data.put("surface", rp.getSurface() != null ? rp.getSurface().doubleValue() :
+            // null);
             data.put("budget", rp.getBudget() != null ? rp.getBudget().doubleValue() : null);
             data.put("status", rp.getRouteStatus() != null ? rp.getRouteStatus().getLabel() : null);
             data.put("entreprise", rp.getRouteEntreprise() != null ? rp.getRouteEntreprise().getLabel() : null);
@@ -207,14 +274,14 @@ public class SignalementSyncService
             data.put("updatedAt", Timestamp.now());
 
             // if (rp.getLatitude() != null && rp.getLongitude() != null) {
-            //     data.put("localisation", new GeoPoint(
-            //         rp.getLatitude().doubleValue(),
-            //         rp.getLongitude().doubleValue()
-            //     ));
+            // data.put("localisation", new GeoPoint(
+            // rp.getLatitude().doubleValue(),
+            // rp.getLongitude().doubleValue()
+            // ));
             // }
 
             if (rp.getFirebaseId() == null || rp.getFirebaseId().isEmpty()) {
-                
+
                 DocumentReference newDoc = ref.document();
                 rp.setFirebaseId(newDoc.getId());
                 data.put("createdAt", Timestamp.now());
@@ -228,20 +295,14 @@ public class SignalementSyncService
         }
     }
 
-
-
-    private String getString(Map<String,Object> map, String key, String defaultValue) {
+    private String getString(Map<String, Object> map, String key, String defaultValue) {
         Object value = map.get(key);
         return value != null ? value.toString() : defaultValue;
     }
 
-    private BigDecimal getBigDecimal(Map<String,Object> map, String key) {
+    private BigDecimal getBigDecimal(Map<String, Object> map, String key) {
         Object value = map.get(key);
         return value != null ? new BigDecimal(value.toString()) : BigDecimal.ZERO;
     }
-
-
-
-
 
 }

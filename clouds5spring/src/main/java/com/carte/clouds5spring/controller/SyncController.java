@@ -2,6 +2,7 @@ package com.carte.clouds5spring.controller;
 
 
 import com.carte.clouds5spring.dto.FirebaseRouteProblemeDTO;
+import com.carte.clouds5spring.service.FirebaseNotificationService;
 import com.carte.clouds5spring.service.SignalementSyncService;
 import com.carte.clouds5spring.service.UserSyncService;
 
@@ -22,10 +23,12 @@ public class SyncController
 {
     private final SignalementSyncService signalementSyncService;
     private final UserSyncService userSyncService;
+    private final FirebaseNotificationService firebaseNotificationService;
 
-    public SyncController(SignalementSyncService signalementSyncService, UserSyncService userSyncService) {
+    public SyncController(SignalementSyncService signalementSyncService, UserSyncService userSyncService, FirebaseNotificationService firebaseNotificationService) {
         this.signalementSyncService = signalementSyncService;
         this.userSyncService = userSyncService;
+        this.firebaseNotificationService = firebaseNotificationService;
     }
 
 
@@ -38,8 +41,11 @@ public class SyncController
     {
         userSyncService.syncUsersToFirebase();
         userSyncService.syncUsersFromFirebase();
-        signalementSyncService.syncLocalToFirebase();
+        // signalementSyncService.syncLocalToFirebase();
+        signalementSyncService.syncLocalToFirebaseAndNotify();
         signalementSyncService.syncFirebaseToLocal();
         return "Synchronisation terminée";
     }
+
+    
 }

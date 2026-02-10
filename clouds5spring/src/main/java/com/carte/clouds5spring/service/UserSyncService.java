@@ -9,9 +9,12 @@ import com.carte.clouds5spring.repository.UserRepository;
 import com.carte.clouds5spring.repository.UserRoleRepository;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.CollectionReference;
+import com.google.cloud.firestore.DocumentReference;
+import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.cloud.firestore.QuerySnapshot;
+import com.google.cloud.firestore.SetOptions;
 import com.google.cloud.firestore.WriteResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.UserRecord;
@@ -109,28 +112,31 @@ public class UserSyncService
 
 
     @Transactional
-    public String syncUsersToFirebase() throws Exception {
+public String syncUsersToFirebase() throws Exception {
+    Firestore firestore = FirebaseConfig.getFirestore();
+    List<User> users = userRepository.findAll();
 
+    for (User user : users) {
         try {
-            List<User> users = userRepository.findAll();
+            String docId = String.valueOf(user.getId());
+            DocumentReference userDocRef = firestore.collection("users").document(docId);
+            DocumentSnapshot existingDoc = userDocRef.get().get();
 
-            Firestore firestore = FirebaseConfig.getFirestore();
+            Map<String, Object> data = new HashMap<>();
+            data.put("id_user", user.getId());
+            data.put("email", user.getEmail());
+            data.put("password", user.getPassword());
+            data.put("pseudo", user.getPseudo());
+            data.put("role", user.getUserRole() != null ? user.getUserRole().getLabel() : null);
+            data.put("nbrTentative", user.getNbrTentative());
+            // data.put("firebaseUid", user.getFirebaseUid());
+            data.put("updatedAt", new java.util.Date());
 
-            for (User user : users) {
-                    Map<String, Object> data = new HashMap<>();
-                    data.put("id_user", user.getId());
-                    data.put("email", user.getEmail());
-                    data.put("password", user.getPassword());
-                    data.put("pseudo", user.getPseudo());
-                    data.put("role", user.getUserRole() != null ? user.getUserRole().getLabel() : null);
-                    data.put("nbrTentative", user.getNbrTentative());
-                    data.put("firebaseUid", user.getFirebaseUid());
-                    data.put("updatedAt", new java.util.Date());
+            if (!existingDoc.exists()) {
+                // 🔹 Créer le document Firestore s’il n’existe pas encore
+                userDocRef.set(data, SetOptions.merge()).get(); // <--- merge ici aussi
+                System.out.println("🟢 Utilisateur créé dans Firestore : " + user.getEmail());
 
-                    WriteResult result = firestore.collection("users")
-                        .document(String.valueOf(user.getId()))
-                        .set(data)
-                        .get();
                 try {
                     createAuthUser(user);
                 } catch (Exception e) {
@@ -138,12 +144,20 @@ public class UserSyncService
                         e.printStackTrace();
                     }
                 }
+            } else {
+                // 🔹 Document existant : on met simplement à jour les champs
+                userDocRef.set(data, SetOptions.merge()).get();
+                System.out.println("🟡 Utilisateur mis à jour : " + user.getEmail());
             }
 
-            return "mety"; 
+
         } catch (Exception e) {
+            System.err.println("❌ Erreur lors de la synchro de l’utilisateur " + user.getEmail());
             e.printStackTrace();
-            throw e;
         }
     }
+
+    return "✅ Synchronisation des utilisateurs terminée avec succès.";
+}
+
 }
