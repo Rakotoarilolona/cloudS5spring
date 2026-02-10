@@ -59,4 +59,12 @@ public class RouteController
     ) {
         return hservice.updatePrixForfaitaire(montant);
     }
+    @GetMapping("/prixforfaitaire")
+    @Operation(summary = "Récupérer le prix forfaitaire")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Succès")
+    })
+    public String getPrixForfaitaire() {
+        return hservice.getPrixForfaitaire();
+    }
 }

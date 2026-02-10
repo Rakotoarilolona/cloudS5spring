@@ -158,4 +158,13 @@ public class Hservice {
         
         return Hjson.formatJson("", "success", "Prix forfaitaire mis à jour avec succès");
     }
+    public String getPrixForfaitaire() {
+        Optional<PrixForfaitaire> pfOpt = prixForfaitaireRepository.findById(1);
+        if (pfOpt.isEmpty()) {
+            throw new NotFoundException("Prix forfaitaire not found");
+        }
+        PrixForfaitaire dto = pfOpt.get();
+        String data = Hjson.toJson(dto);
+        return Hjson.formatJson(data, "success", "Data fetched successfully");
+    }
 }
