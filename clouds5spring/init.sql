@@ -139,6 +139,8 @@ INSERT INTO user_(pseudo, email, password, nbrtentative, id_userrole, blockedAt,
 INSERT INTO user_(pseudo, email, password, nbrtentative, id_userrole, blockedAt, firebase_uid) VALUES
 ('test2', 'test2@gmail.com', 'test123', 0, 2, NULL, NULL);
 
+INSERT INTO prixforfaitaire(montant) VALUES (100000.00);
+
 -- Mise à jour du mot de passe
 UPDATE user_
 SET password = 'manager4'
