@@ -53,6 +53,7 @@ public class SecurityConfig
 					"/auth/login",
 					"/signalements",
 					"/admin/firebase-signalements",
+					"/signalements/{id}/photos",
 					"/signalements/{id}"
 				).permitAll()
 				.anyRequest().authenticated())
