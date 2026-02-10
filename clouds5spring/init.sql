@@ -1,4 +1,5 @@
 -- Truncate avec réinitialisation des séquences auto-incrément
+DROP TABLE IF EXISTS prixforfaitaire CASCADE;
 DROP TABLE IF EXISTS photo CASCADE;
 DROP TABLE IF EXISTS historiquestatusroute CASCADE;
 DROP TABLE IF EXISTS routeprobleme CASCADE;
@@ -64,6 +65,7 @@ CREATE TABLE IF NOT EXISTS routeprobleme(
    id_user INTEGER,
    firebaseId VARCHAR(255),  -- Colonne mentionnée dans l'erreur
    updatedAt TIMESTAMP,  -- Colonne mentionnée dans l'erreur
+   niveau INTEGER,
    PRIMARY KEY(id),
    FOREIGN KEY(id_routeentreprise) REFERENCES routeentreprise(id),
    FOREIGN KEY(id_routestatus) REFERENCES routestatus(id),
@@ -80,7 +82,7 @@ CREATE TABLE IF NOT EXISTS historiquestatusroute(
    FOREIGN KEY(id_routestatus) REFERENCES routestatus(id)
 );
 
-CREATE TABLE photo(
+CREATE TABLE IF NOT EXISTS photo(
    id SERIAL,
    bytes BYTEA,
    id_routeprobleme INTEGER,
@@ -88,9 +90,14 @@ CREATE TABLE photo(
    FOREIGN KEY(id_routeprobleme) REFERENCES routeprobleme(id)
 );
 
+CREATE TABLE IF NOT EXISTS prixforfaitaire(
+   id SERIAL PRIMARY KEY,
+   montant NUMERIC(15,2)
+);
+
 
 -- Option 1: Tronquer avec CASCADE (recommandé)
-TRUNCATE TABLE photo, historiquestatusroute, routeprobleme, usertentativehistorique, user_, routestatus, routeentreprise, userrole
+TRUNCATE TABLE prixforfaitaire,photo, historiquestatusroute, routeprobleme, usertentativehistorique, user_, routestatus, routeentreprise, userrole
 RESTART IDENTITY CASCADE;
 
 -- Option 2: Tronquer dans l'ordre inverse des dépendances
