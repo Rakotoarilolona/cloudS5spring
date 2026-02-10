@@ -19,6 +19,7 @@ import com.carte.clouds5spring.entity.User;
 import com.carte.clouds5spring.service.AuthService;
 import com.carte.clouds5spring.service.UserService;
 import com.carte.clouds5spring.dto.UserDto;
+import com.carte.clouds5spring.dto.UserRoleDto;
 
 @RestController
 @RequestMapping("/admin/users")
@@ -53,12 +54,14 @@ public class UserAdminController
     }
 
     @GetMapping("/blocked")
-    public ResponseEntity<ApiResponse<List<User>>> getBlockedUsers() {
+    public ResponseEntity<ApiResponse<List<UserDto>>> getBlockedUsers() {
 
         List<User> users = userService.getBlockedUsers();
-
+        List<UserDto> usersDto = users.stream()
+            .map(User::toDto)
+            .toList();
         return ResponseEntity.ok(
-            ApiResponse.success(users)
+            ApiResponse.success(usersDto)
         );
     }
 

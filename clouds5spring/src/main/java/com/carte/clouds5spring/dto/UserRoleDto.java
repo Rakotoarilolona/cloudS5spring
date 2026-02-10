@@ -1,5 +1,5 @@
 package com.carte.clouds5spring.dto;
-
+import com.carte.clouds5spring.entity.UserRole;
 public class UserRoleDto {
     private Integer id;
     private String label;

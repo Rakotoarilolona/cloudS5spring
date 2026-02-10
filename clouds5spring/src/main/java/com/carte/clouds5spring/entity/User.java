@@ -145,7 +145,7 @@ public class User {
             dto.setNbrTentative(this.getNbrTentative());
         }
         if(this.getUserRole() != null && this.getUserRole().getId() != null) {
-            dto.setUserRoleId(this.getUserRole().getId());
+            dto.setUserRole(this.getUserRole().toDto());
         }
         return dto;
     }

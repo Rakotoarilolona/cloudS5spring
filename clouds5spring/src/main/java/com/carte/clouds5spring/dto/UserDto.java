@@ -7,7 +7,7 @@ public class UserDto
     private String email;
     private String pseudo;
     private Integer nbrTentative;
-    private Integer userRoleId;
+    private UserRoleDto userRole;
 
     public UserDto() {}
 
@@ -43,12 +43,12 @@ public class UserDto
         this.nbrTentative = nbrTentative;
     }
 
-    public Integer getUserRoleId() {
-        return userRoleId;
+    public UserRoleDto getUserRole() {
+        return userRole;
     }
 
-    public void setUserRoleId(Integer userRoleId) {
-        this.userRoleId = userRoleId;
+    public void setUserRole(UserRoleDto userRole) {
+        this.userRole = userRole;
     }
 
     public User toEntity() 
