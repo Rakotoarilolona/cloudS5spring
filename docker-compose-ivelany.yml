@@ -10,8 +10,6 @@ services:
       - ./Cloud_Vue/osm-server/data/madagascar.osm.pbf:/data/region.osm.pbf
       - osm-data:/data/database
     environment:
-      - IMPORT_NATURAL_EARTH=false
-      - IMPORT_WIKIDATA=false
       - SKIP_EXTERNAL_DATA=true  # On saute les téléchargements externes pour accélérer
     command: import
     restart: "no"
