@@ -47,4 +47,16 @@ public class RouteController
     public String getRouteProblemeDashboard() {
         return hservice.getProblemeDashboard();
     }
+
+    @PostMapping("/prixforfaitaire")
+    @Operation(summary = "modifier forfaitaire")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Succès")
+    })
+    public String updatePrixForfaitaire(
+        @Parameter(description = "Montant du prix forfaitaire", required = true)
+        @RequestParam double montant
+    ) {
+        return hservice.updatePrixForfaitaire(montant);
+    }
 }
