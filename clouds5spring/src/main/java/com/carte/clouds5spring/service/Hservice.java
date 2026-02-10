@@ -9,28 +9,30 @@ import com.carte.clouds5spring.exception.NotFoundException;
 
 import com.carte.clouds5spring.hutil.Hjson;
 
-import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
-import org.springframework.util.RouteMatcher.Route;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.time.LocalDateTime;
 @Service
 public class Hservice {
 
     private final RouteProblemeRepository routeProblemeRepository;
     private final RouteStatusRepository routeStatusRepository;
     private final HistoriqueStatusRouteRepository historiqueStatusRouteRepository;
+    private final PrixForfaitaireRepository prixForfaitaireRepository;
 
     public Hservice(RouteProblemeRepository routeProblemeRepository, 
-        RouteStatusRepository routeStatusRepository, HistoriqueStatusRouteRepository historiqueStatusRouteRepository) 
+        RouteStatusRepository routeStatusRepository,
+        HistoriqueStatusRouteRepository historiqueStatusRouteRepository,
+        PrixForfaitaireRepository prixForfaitaireRepository) 
     {
         this.routeProblemeRepository = routeProblemeRepository;
         this.routeStatusRepository = routeStatusRepository;
         this.historiqueStatusRouteRepository = historiqueStatusRouteRepository;
+        this.prixForfaitaireRepository = prixForfaitaireRepository;
     }
 
     public String getProblemeRoutier() {
@@ -149,5 +151,11 @@ public class Hservice {
         String data = Hjson.toJson(dashboard);
         return Hjson.formatJson(data, "success", "Data fetched successfully");
 
+    }
+    public String updatePrixForfaitaire(double montant) {
+        BigDecimal montantDecimal = BigDecimal.valueOf(montant);
+        prixForfaitaireRepository.upsertMontantId1(montantDecimal);
+        
+        return Hjson.formatJson("", "success", "Prix forfaitaire mis à jour avec succès");
     }
 }
