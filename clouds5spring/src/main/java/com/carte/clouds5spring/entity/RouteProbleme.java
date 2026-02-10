@@ -67,6 +67,9 @@ public class RouteProbleme {
     @Column(name = "problemedescription", length = 255)
     private String problemeDescription;
 
+    @Column(name = "niveau")
+    private Integer niveau;
+
     @JsonIgnore
     @OneToMany(mappedBy = "routeProbleme", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Photo> photos = new java.util.ArrayList<>();
@@ -149,6 +152,14 @@ public class RouteProbleme {
         this.firebaseId = firebaseId;
     }
 
+    public Integer getNiveau() {
+        return niveau;
+    }
+
+    public void setNiveau(Integer niveau) {
+        this.niveau = niveau;
+    }
+
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
     }
@@ -204,6 +215,10 @@ public class RouteProbleme {
         }
         if(this.getProblemeDescription() != null) {
             dto.setProblemeDescription(this.getProblemeDescription());
+        }
+
+        if (this.getNiveau() != null) {
+            dto.setNiveau(this.getNiveau());
         }
 
         if (this.getPhotos() != null && !this.getPhotos().isEmpty()) {

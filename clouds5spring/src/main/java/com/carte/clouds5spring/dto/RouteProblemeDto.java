@@ -16,6 +16,7 @@ public class RouteProblemeDto {
     private String problemeDescription;
     private BigDecimal longitude;
     private BigDecimal latitude;
+    private Integer niveau;
     private RouteEntrepriseDto entreprise;
     private List<PhotoDto> photos;
 
@@ -29,7 +30,8 @@ public class RouteProblemeDto {
             String routeStatusName,
             String problemeDescription,
             BigDecimal longitude,
-            BigDecimal latitude
+            BigDecimal latitude,
+            Integer niveau
     ) {
         this.id = id;
         this.surface = surface;
@@ -41,6 +43,7 @@ public class RouteProblemeDto {
         this.problemeDescription = problemeDescription;
         this.longitude = longitude;
         this.latitude = latitude;
+        this.niveau = niveau;
     }
 
     public String getRouteEntrepriseName() {
@@ -85,6 +88,14 @@ public class RouteProblemeDto {
     }
 
     public RouteProblemeDto() {}
+
+    public Integer getNiveau() {
+        return niveau;
+    }
+
+    public void setNiveau(Integer niveau) {
+        this.niveau = niveau;
+    }
 
     public Integer getId() {
         return id;
@@ -160,6 +171,9 @@ public class RouteProblemeDto {
         }
         if(this.getProblemeDescription() != null) {
             entity.setProblemeDescription(this.getProblemeDescription());
+        }
+        if (this.getNiveau() != null) {
+            entity.setNiveau(this.getNiveau());
         }
         return entity;
     }

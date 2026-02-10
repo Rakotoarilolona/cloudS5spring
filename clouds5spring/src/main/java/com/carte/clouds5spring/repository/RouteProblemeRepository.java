@@ -25,7 +25,8 @@ public interface RouteProblemeRepository extends JpaRepository<RouteProbleme, In
             rs.label,
             rp.problemeDescription,
             rp.longitude,
-            rp.latitude
+            rp.latitude,
+            rp.niveau
         )
         FROM RouteProbleme rp
         LEFT JOIN rp.routeEntreprise re
